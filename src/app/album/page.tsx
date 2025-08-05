@@ -117,7 +117,8 @@ export default function AlbumPage() {
                 const target = mutation.target as HTMLElement;
                 const rotationMatch = /rotateY\(([^d]+)deg\)/.exec(target.style.transform);
                 if (rotationMatch) {
-                    const rotation = parseFloat(rotationMatch[1]) % 360;
+                    let rotation = parseFloat(rotationMatch[1]);
+                    rotation = (rotation % 360 + 360) % 360; // Normalize to 0-360
                     if (rotation > 90 && rotation < 270) {
                         target.classList.add('is-back');
                     } else {
@@ -130,7 +131,7 @@ export default function AlbumPage() {
 
     const cards = carousel.querySelectorAll('.carousel-card');
     cards.forEach(card => {
-        observer.observe(card, { attributes: true });
+        observer.observe(card, { attributes: true, attributeFilter: ['style'] });
     });
 
     return () => observer.disconnect();
@@ -189,7 +190,6 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    // Increased the radius calculation to make the carousel wider
     const radius = Math.min(window.innerWidth / 2.5, 450); 
     const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
