@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Memory } from '@/types';
 import Header from '@/components/header';
@@ -14,6 +14,8 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import confetti from 'canvas-confetti';
+import { Button } from '@/components/ui/button';
+import { Volume2, VolumeX } from 'lucide-react';
 
 
 const thoughtCards = [
@@ -49,6 +51,9 @@ export default function AlbumPage() {
   const [editingMemory, setEditingMemory] = useState<Memory | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
 
   useEffect(() => {
     try {
@@ -166,13 +171,24 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.min(total * 50, 400); 
+    const radius = Math.min(total * 45, 300); 
     const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
     return {
       transform,
       '--transform-hover': transformHover,
     };
+  };
+
+  const toggleMusic = () => {
+    if (audioRef.current) {
+        if (isMusicPlaying) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play();
+        }
+        setIsMusicPlaying(!isMusicPlaying);
+    }
   };
 
   if (!memories.length) {
@@ -185,6 +201,10 @@ export default function AlbumPage() {
 
   return (
     <>
+      <audio ref={audioRef} loop>
+          <source src="/placeholder-music.mp3" type="audio/mpeg" />
+          Aapka browser audio element ko support nahi karta.
+      </audio>
       <BackgroundAnimations />
       <div className="relative z-10 flex min-h-screen flex-col px-4 pt-8 sm:px-6 lg:px-8">
         <Header />
@@ -239,6 +259,12 @@ export default function AlbumPage() {
           </section>
 
         <Footer />
+        <div className="fixed bottom-5 right-5 z-20">
+            <Button onClick={toggleMusic} variant="outline" size="icon" className="rounded-full">
+                {isMusicPlaying ? <Volume2 /> : <VolumeX />}
+                <span className="sr-only">Music On/Off</span>
+            </Button>
+        </div>
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -257,3 +283,5 @@ export default function AlbumPage() {
     </>
   );
 }
+
+    
