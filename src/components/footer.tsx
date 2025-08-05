@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const Footer = () => {
@@ -7,10 +8,12 @@ const Footer = () => {
         Yeh bandhan toh pyaar ka bandhan hai 💖
       </p>
       <p className="text-sm text-muted-foreground mt-2">
-        Bade pyaar se banaya hai - Abhishek Kumar ne
+        Bade pyaar se banaya hai - <span className="creator-name">Abhishek Kumar</span> ne
       </p>
     </footer>
   );
 };
 
 export default Footer;
+
+    

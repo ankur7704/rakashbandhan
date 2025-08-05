@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -234,7 +235,7 @@ export default function AlbumPage() {
         </main>
         
         <section className="w-full max-w-6xl mx-auto mt-16 py-12 px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-headline text-center mb-12 text-primary-foreground/90 text-shadow-custom">Yaadon Ka Safar</h2>
+            <h2 className="text-3xl font-headline text-center mb-4 text-primary-foreground/90 text-shadow-custom">Yaadon Ka Safar</h2>
             <div className="memory-bus-container">
               <div className="memory-bus-aisle"></div>
               {sortedYears.map((year, yearIndex) => (
@@ -310,3 +311,5 @@ export default function AlbumPage() {
     </>
   );
 }
+
+    
