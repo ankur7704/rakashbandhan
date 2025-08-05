@@ -23,7 +23,10 @@ const funnyPrompts = [
     "Redraw this in a vintage comic book style, with one sibling as a superhero and the other as their goofy sidekick during a mundane task like cleaning a room. Retain their facial features.",
     "An artwork where the siblings are chefs in a chaotic kitchen, comically failing to bake a cake, with flour everywhere. Make sure their faces are clearly identifiable.",
     "Depict the siblings as characters in a classic video game, like Mario and Luigi, but on a funny quest to find a hidden stash of chocolates. Ensure the faces look like the people in the photo.",
-    "Create a hilarious image where one sibling is a goofy-looking dog holding a bone, and the other is trying to snatch it away playfully. Maintain the facial resemblance from the original picture."
+    "Create a hilarious image where one sibling is a goofy-looking dog holding a bone, and the other is trying to snatch it away playfully. Maintain the facial resemblance from the original picture.",
+    "Turn this photo into a scene from a Bollywood movie poster, where the siblings are in dramatic, over-the-top poses. Make sure their faces from the photo are used.",
+    "Illustrate this as a scene where the siblings are two old people, sitting on a bench and still bickering like kids. Use their faces from the original picture.",
+    "Create a funny image of the siblings as astronauts floating in space, arguing over who gets the window seat in the spaceship. Their faces must be from the original photo."
 ];
 
 const prompt = ai.definePrompt({
@@ -39,12 +42,12 @@ const prompt = ai.definePrompt({
 
     prompt: `You are a creative AI that generates funny and personal images for Raksha Bandhan. Your task is to take an original photo and a theme, and create a new, hilarious image and a matching witty caption in Hinglish.
 
-    **CRITICAL INSTRUCTIONS:**
-    1.  **Preserve Faces:** You MUST use the faces of the people from the original photo. Do not create new people. The generated image must be recognizable as the same individuals.
-    2.  **Funny Theme:** Generate an image based on the following theme: {{{prompt}}}
-    3.  **Funny Caption:** Write a new, short, funny, and comedic caption or wish in Hinglish for the image you just generated. The caption should be about the playful sibling relationship (nok-jhok).
+    **CRITICAL, NON-NEGOTIABLE INSTRUCTIONS:**
+    1.  **PRESERVE FACES FROM THE ORIGINAL PHOTO:** This is the most important rule. You MUST use the exact faces of the people from the original photo provided. Do not alter their faces, generate new faces, or replace them. The new image's characters MUST be perfectly recognizable as the same individuals from the original photo. Failure to do this will ruin the purpose of the image.
+    2.  **FUNNY THEME:** Generate a new image based on the following creative theme: {{{prompt}}}
+    3.  **FUNNY CAPTION:** Write a completely new, short, funny, and comedic caption or wish in Hinglish for the image you just generated. The caption must be about the playful sibling relationship (nok-jhok) and should humorously describe the new scene.
 
-    **PHOTO:**
+    **ORIGINAL PHOTO (Use faces from here):**
     {{media url=imageDataUri}}
     `,
 });
