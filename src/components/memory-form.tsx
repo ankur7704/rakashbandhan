@@ -28,6 +28,7 @@ type MemoryFormProps = {
     imageFile?: File;
     imageDescription: string;
     wish: string;
+    imagePreview?: string;
   }) => Promise<void>;
   onDelete?: () => void;
   onClose: () => void;
@@ -81,7 +82,7 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    onSave({ ...values, wish: values.wish || memoryToEdit?.wish || '' });
+    onSave({ ...values, wish: values.wish || memoryToEdit?.wish || '', imagePreview: imagePreview || undefined });
   };
 
   return (

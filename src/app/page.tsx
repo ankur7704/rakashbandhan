@@ -72,6 +72,7 @@ export default function Home() {
     imageFile?: File;
     imageDescription: string;
     wish: string;
+    imagePreview?: string;
   }) => {
     if (editingMemory) {
       // Edit existing memory
@@ -85,11 +86,8 @@ export default function Home() {
       toast({ title: "Memory Updated!", description: "Your beautiful memory has been saved." });
     } else {
       // Add new memory
-      let imageUrl = 'https://placehold.co/600x400.png';
-      if (formData.imageFile) {
-        imageUrl = URL.createObjectURL(formData.imageFile);
-      }
-
+      let imageUrl = formData.imagePreview || 'https://placehold.co/600x400.png';
+      
       let finalWish = formData.wish;
       if (!finalWish && formData.imageDescription) {
         try {
