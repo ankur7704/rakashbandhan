@@ -79,7 +79,13 @@ export default function Home() {
       setMemories(
         memories.map((mem) =>
           mem.id === editingMemory.id
-            ? { ...mem, ...formData, imageUrl: editingMemory.imageUrl, wish: formData.wish }
+            ? {
+                ...mem,
+                imageDescription: formData.imageDescription,
+                wish: formData.wish,
+                imageUrl: formData.imagePreview || mem.imageUrl,
+                dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
+              }
             : mem
         )
       );
