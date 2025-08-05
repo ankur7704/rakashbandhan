@@ -9,10 +9,8 @@ import BackgroundAnimations from '@/components/background-animations';
 import MemoryCard from '@/components/memory-card';
 import MemoryForm from '@/components/memory-form';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { PlusCircle } from 'lucide-react';
 import { generateWishAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import confetti from 'canvas-confetti';
@@ -53,34 +51,38 @@ export default function AlbumPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const storedMemories = localStorage.getItem('raksha-bandhan-memories');
-    if (storedMemories) {
-      const parsedMemories: Memory[] = JSON.parse(storedMemories);
-      const memoriesWithStyles = parsedMemories.map((mem) => ({
-        ...mem,
-        rotation: 0,
-        scale: 1,
-      }));
-      setMemories(memoriesWithStyles);
-
-      const isFirstCreation = localStorage.getItem('raksha-bandhan-album-created') === 'true';
-      if(isFirstCreation){
-        toast({
-            title: "Happy Raksha Bandhan! 🎉",
-            description: "Aapka khoobsurat yaadon ka album taiyaar hai.",
-            duration: 5000,
-        });
-        confetti({
-            particleCount: 150,
-            spread: 180,
-            origin: { y: 0.6 }
-        });
-        localStorage.removeItem('raksha-bandhan-album-created');
+    try {
+      const storedMemories = localStorage.getItem('raksha-bandhan-memories');
+      if (storedMemories) {
+        const parsedMemories: Memory[] = JSON.parse(storedMemories);
+        const memoriesWithStyles = parsedMemories.map((mem) => ({
+          ...mem,
+          rotation: 0,
+          scale: 1,
+        }));
+        setMemories(memoriesWithStyles);
+  
+        const isFirstCreation = localStorage.getItem('raksha-bandhan-album-created') === 'true';
+        if(isFirstCreation){
+          toast({
+              title: "Happy Raksha Bandhan! 🎉",
+              description: "Aapka khoobsurat yaadon ka album taiyaar hai.",
+              duration: 5000,
+          });
+          confetti({
+              particleCount: 150,
+              spread: 180,
+              origin: { y: 0.6 }
+          });
+          localStorage.removeItem('raksha-bandhan-album-created');
+        }
+  
+      } else {
+        router.push('/');
       }
-
-    } else {
-      // If no memories are found, redirect back to the creation page
-      router.push('/');
+    } catch (error) {
+        console.error("Error reading from localStorage:", error);
+        router.push('/');
     }
   }, [router, toast]);
 
@@ -103,7 +105,6 @@ export default function AlbumPage() {
     let imageUrl = formData.imagePreview;
   
     if (editingMemory) {
-      // Edit existing memory
       setMemories(
         memories.map((mem) =>
           mem.id === editingMemory.id
@@ -119,7 +120,6 @@ export default function AlbumPage() {
       );
       toast({ title: "Yaad Update Ho Gayi!", description: "Aapki khoobsurat yaad save ho gayi hai." });
     } else {
-      // Add new memory
       if (!imageUrl) {
         imageUrl = 'https://placehold.co/600x400.png';
       }
@@ -166,7 +166,7 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.min(total * 50, 400); // Increased radius for more gap
+    const radius = Math.min(total * 50, 400); 
     const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
     return {
@@ -200,7 +200,7 @@ export default function AlbumPage() {
                 >
                   <MemoryCard
                     memory={memory}
-                    isActive={true} // All cards are interactive in this view
+                    isActive={true}
                   />
                 </div>
               ))}
@@ -218,7 +218,7 @@ export default function AlbumPage() {
                   <div key={memory.id} className="inspiration-card">
                     <Card className={`h-full ${thought.color} bg-opacity-70 backdrop-blur-sm overflow-hidden`}>
                         <CardContent className="p-4 flex flex-col">
-                           <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md mb-4">
+                           <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden shadow-md mb-4">
                              <Image
                                 src={memory.imageUrl}
                                 alt={memory.imageDescription}
