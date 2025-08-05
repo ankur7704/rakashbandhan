@@ -10,7 +10,7 @@ import type { GenerateImageInput, GenerateImageOutput } from '@/types';
 import {z} from 'genkit';
 
 const GenerateImageOutputSchema = z.object({
-  imageUrl: z.string().url(),
+  imageUrl: z.string(),
   wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
   status: z.enum(['completed', 'failed']),
   error: z.string().optional(),
