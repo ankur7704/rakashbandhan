@@ -36,7 +36,7 @@ const prompt = ai.definePrompt({
         imageDataUri: z.string()
     })},
     output: { schema: z.object({
-        imageUrl: z.string().describe('The URL of the generated image.'),
+        imageUrl: z.string().describe('A URL of the newly generated image.'),
         wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
     }) },
 
