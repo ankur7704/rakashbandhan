@@ -42,12 +42,8 @@ export default function Home() {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMemory, setEditingMemory] = useState<Memory | null>(null);
-  const [rotation, setRotation] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const { toast } = useToast();
-
-  const totalMemories = memories.length + 1; // including 'add new' card
-  const angle = 360 / totalMemories;
-  const radius = 300 / (2 * Math.tan(Math.PI / totalMemories));
 
   useEffect(() => {
     const memoriesWithStyles = initialMemoriesData.map((mem) => ({
@@ -58,10 +54,19 @@ export default function Home() {
     setMemories(memoriesWithStyles);
   }, []);
 
-  const handleOpenModal = (memory: Memory | null) => {
-    setEditingMemory(memory);
-    setIsModalOpen(true);
+  const handleOpenModal = (memory: Memory | null, index: number) => {
+    if (index === activeIndex) {
+      setEditingMemory(memory);
+      setIsModalOpen(true);
+    } else {
+      setActiveIndex(index);
+    }
   };
+  
+  const handleAddNew = () => {
+    setEditingMemory(null);
+    setIsModalOpen(true);
+  }
 
   const handleSaveMemory = async (formData: {
     imageFile?: File;
@@ -117,14 +122,42 @@ export default function Home() {
   };
 
   const handleDeleteMemory = (id: string) => {
-    setMemories(memories.filter((mem) => mem.id !== id));
+    const newMemories = memories.filter((mem) => mem.id !== id);
+    setMemories(newMemories);
+    if(activeIndex >= newMemories.length) {
+        setActiveIndex(Math.max(0, newMemories.length - 1));
+    }
     toast({ variant: "destructive", title: "Memory Removed", description: "The memory has been removed from your album." });
     setIsModalOpen(false);
     setEditingMemory(null);
   };
 
   const rotateCarousel = (direction: 'next' | 'prev') => {
-    setRotation(prev => prev + (direction === 'next' ? -angle : angle));
+    const totalMemories = memories.length;
+    if (totalMemories === 0) return;
+    setActiveIndex(prev => {
+        const newIndex = direction === 'next' ? prev + 1 : prev -1;
+        // circular navigation
+        return (newIndex + totalMemories) % totalMemories;
+    })
+  };
+
+  const getCardStyle = (index: number) => {
+    const offset = index - activeIndex;
+    const isVisible = Math.abs(offset) < 3;
+    
+    const xOffset = offset * 200;
+    const scale = offset === 0 ? 1.1 : 0.8;
+    const rotationY = offset * -25;
+    const zIndex = memories.length - Math.abs(offset);
+    const opacity = isVisible ? 1 : 0;
+  
+    return {
+      transform: `translateX(calc(-50% + ${xOffset}px)) translateY(-50%) rotateY(${rotationY}deg) scale(${scale})`,
+      zIndex: zIndex,
+      opacity: opacity,
+      pointerEvents: isVisible ? 'auto' : 'none'
+    };
   };
 
   return (
@@ -134,33 +167,27 @@ export default function Home() {
         <Header />
         <main className="flex-grow flex flex-col items-center justify-center">
           <div className="carousel-container my-12">
-            <div className="carousel" style={{ transform: `rotateY(${rotation}deg)` }}>
-              {memories.map((memory, index) => {
-                  const cardAngle = angle * index;
-                  return (
-                    <div
-                      key={memory.id}
-                      className="carousel-card"
-                      style={{
-                        transform: `rotateY(${cardAngle}deg) translateZ(${radius}px)`,
-                      }}
-                    >
-                      <MemoryCard
-                        memory={memory}
-                        onClick={() => handleOpenModal(memory)}
-                      />
-                    </div>
-                  );
-                })}
+            <div className="carousel">
+              {memories.map((memory, index) => (
+                <div
+                  key={memory.id}
+                  className="carousel-card"
+                  style={getCardStyle(index)}
+                  onClick={() => handleOpenModal(memory, index)}
+                >
+                  <MemoryCard
+                    memory={memory}
+                    isActive={index === activeIndex}
+                  />
+                </div>
+              ))}
               <div
                 className="carousel-card"
-                 style={{
-                    transform: `rotateY(${angle * memories.length}deg) translateZ(${radius}px)`,
-                  }}
+                style={getCardStyle(memories.length)}
               >
                 <div
                   className="flex h-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 bg-primary/10 p-8 text-center text-primary/80 transition-all duration-300 hover:border-primary hover:bg-primary/20 hover:text-primary hover:shadow-xl"
-                  onClick={() => handleOpenModal(null)}
+                  onClick={handleAddNew}
                   role="button"
                   aria-label="Add new memory"
                 >
@@ -173,7 +200,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-8 mt-8">
             <Button variant="ghost" size="icon" onClick={() => rotateCarousel('prev')} className="h-16 w-16 text-primary hover:text-primary-foreground">
               <ArrowLeftCircle className="h-12 w-12" />
             </Button>
