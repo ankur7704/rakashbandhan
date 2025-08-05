@@ -13,6 +13,35 @@ import { PlusCircle } from 'lucide-react';
 import { generateWishAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { Card, CardContent } from '@/components/ui/card';
+
+const thoughtCards = [
+    {
+      quote: "Bhai-behen ka rishta Tom & Jerry jaisa hota hai, ladte bhi hain aur ek dusre ke bina reh bhi nahi sakte!",
+      color: "bg-secondary/20 border-secondary"
+    },
+    {
+      quote: "Rakhi sirf ek dhaaga nahi, ek vaada hai... ki main tera saara chocolates chura lunga/lungi!",
+      color: "bg-accent/20 border-accent"
+    },
+    {
+      quote: "Duniya mein sabse best feeling? Jab aapka bhai/behen aapke secret keeper hote hain.",
+      color: "bg-primary/20 border-primary"
+    },
+    {
+      quote: "Door ho ya paas, Rakhi ke din toh special discount on 'emotional atyachar' milta hi hai!",
+      color: "bg-blue-100 border-blue-300"
+    },
+    {
+      quote: "Is Rakhi, Bhagwan se prarthna hai ki agle janam mein bhi mujhe yahi idiot bhai/behen mile.",
+      color: "bg-pink-100 border-pink-300"
+    },
+    {
+      quote: "Remote ki ladai se lekar life ke har support tak, yeh bandhan anmol hai.",
+      color: "bg-purple-100 border-purple-300"
+    }
+  ];
 
 export default function AlbumPage() {
   const [memories, setMemories] = useState<Memory[]>([]);
@@ -118,7 +147,7 @@ export default function AlbumPage() {
 
   const getCardStyle = (index: number, total: number) => {
     const angle = (360 / total) * index;
-    const radius = Math.max(total * 40, 250); // Adjust radius based on number of cards, with a minimum
+    const radius = Math.max(total * 50, 300); // Adjust radius based on number of cards
     const transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(-50%)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) translateY(-50%) scale(1.1)`;
     return {
@@ -162,11 +191,47 @@ export default function AlbumPage() {
              <p className="text-muted-foreground text-center max-w-md">
                 Yeh aapka digital Rakhi album hai. Animation rokne ke liye card par cursor le jaayein aur yaadon ko badalne ya naya AI sandesh paane ke liye click karein.
              </p>
-             <Button variant="outline" onClick={() => router.push('/')}>
-                Editor Par Vaapas Jayein
-             </Button>
+             <div className="flex items-center gap-4">
+               <Button variant="outline" onClick={() => router.push('/')}>
+                  Editor Par Vaapas Jayein
+               </Button>
+               <Button onClick={handleAddNew}>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Nayi Yaad Jodein
+               </Button>
+             </div>
           </div>
         </main>
+        
+        <section className="w-full max-w-6xl mx-auto mt-20 py-12">
+            <h2 className="text-3xl font-headline text-center mb-2 text-primary-foreground/90 text-shadow-custom">Aapki Yaadon Ke Kuch Pal</h2>
+            <p className="text-center text-muted-foreground mb-8">Har tasveer ek kahani kehti hai. Yahan kuch dil se nikle vichar hain!</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {memories.map((memory, index) => {
+                const thought = thoughtCards[index % thoughtCards.length];
+                return (
+                  <div key={memory.id} className="inspiration-card">
+                    <Card className={`h-full ${thought.color} bg-opacity-70 backdrop-blur-sm overflow-hidden`}>
+                        <CardContent className="p-4 flex flex-col">
+                           <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md mb-4">
+                             <Image
+                                src={memory.imageUrl}
+                                alt={memory.imageDescription}
+                                fill
+                                className="object-cover"
+                                data-ai-hint={memory.dataAiHint}
+                              />
+                           </div>
+                           <blockquote className="text-center font-headline text-base italic text-gray-700 flex-grow flex items-center justify-center">
+                            <p>"{thought.quote}"</p>
+                           </blockquote>
+                        </CardContent>
+                    </Card>
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+
         <Footer />
       </div>
 
