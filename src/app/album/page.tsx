@@ -44,28 +44,10 @@ export default function AlbumPage() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [carouselRadius, setCarouselRadius] = useState(450);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const memoriesByYear = memories.reduce((acc, memory) => {
-    const year = memory.year || "Purani Yaadein";
-    if (!acc[year]) {
-      acc[year] = [];
-    }
-    acc[year].push(memory);
-    return acc;
-  }, {} as Record<string, Memory[]>);
-
-  const sortedYears = Object.keys(memoriesByYear).sort((a, b) => {
-      if (a === "Purani Yaadein") return 1;
-      if (b === "Purani Yaadein") return -1;
-      const yearA = parseInt(a);
-      const yearB = parseInt(b);
-      if (isNaN(yearA)) return 1;
-      if (isNaN(yearB)) return -1;
-      return yearB - yearA;
-  });
-
-
   useEffect(() => {
+    // This code now runs only on the client, after the component has mounted.
     try {
       const storedMemories = localStorage.getItem('raksha-bandhan-memories');
       const albumInfoString = localStorage.getItem('raksha-bandhan-album-info');
@@ -108,23 +90,24 @@ export default function AlbumPage() {
     } catch (error) {
         console.error("Error reading from localStorage:", error);
         router.push('/');
+    } finally {
+        setIsLoading(false);
     }
-  }, [router, toast]);
 
-  useEffect(() => {
-    // This code now runs only on the client, after the component has mounted.
     const updateRadius = () => {
       const newRadius = Math.min(window.innerWidth / 2.5, 450);
       setCarouselRadius(newRadius);
     }
     updateRadius();
     window.addEventListener('resize', updateRadius);
+
     return () => window.removeEventListener('resize', updateRadius);
-  }, []);
+  }, [router, toast]);
+
 
   useEffect(() => {
     const carousel = carouselRef.current;
-    if (!carousel) return;
+    if (!carousel || memories.length === 0) return;
 
     const observer = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
@@ -152,6 +135,24 @@ export default function AlbumPage() {
     return () => observer.disconnect();
   }, [memories]);
 
+  const memoriesByYear = memories.reduce((acc, memory) => {
+    const year = memory.year || "Purani Yaadein";
+    if (!acc[year]) {
+      acc[year] = [];
+    }
+    acc[year].push(memory);
+    return acc;
+  }, {} as Record<string, Memory[]>);
+
+  const sortedYears = Object.keys(memoriesByYear).sort((a, b) => {
+      if (a === "Purani Yaadein") return 1;
+      if (b === "Purani Yaadein") return -1;
+      const yearA = parseInt(a);
+      const yearB = parseInt(b);
+      if (isNaN(yearA)) return 1;
+      if (isNaN(yearB)) return -1;
+      return yearB - yearA;
+  });
 
   const handleOpenModal = (memory: Memory | null) => {
     setEditingMemory(memory);
@@ -224,7 +225,7 @@ export default function AlbumPage() {
     }
   };
 
-  if (!memories.length) {
+  if (isLoading) {
     return (
        <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
