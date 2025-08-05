@@ -12,13 +12,53 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Trash2, ImagePlus, ArrowRight } from 'lucide-react';
+import { PlusCircle, Trash2, ImagePlus, ArrowRight, Sparkles, Heart, Gift } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { SweetsIcon, BrotherSisterIcon, RakhiIcon } from '@/components/icons';
 
 type MemoryInput = Omit<Memory, 'id' | 'rotation' | 'scale'> & {
   id: number;
   imageFile?: File;
 };
+
+const inspirationCards = [
+  {
+    icon: BrotherSisterIcon,
+    title: "Nok-Jhonk Express",
+    text: "Tom & Jerry jaisi hai apni jodi, par Rakhi ke din no jhagda, only pyaar thodi thodi!",
+    color: "bg-secondary/20 border-secondary"
+  },
+  {
+    icon: SweetsIcon,
+    title: "Sweet Bribe",
+    text: "Is Rakhi, bas ek promise: meri chocolate pe nazar mat dalna. Deal? Happy Raksha Bandhan!",
+    color: "bg-accent/20 border-accent"
+  },
+  {
+    icon: RakhiIcon,
+    title: "Emotional Atyachar",
+    text: "Miles may separate us, but our bond is a wifi connection that never lags. Miss you, bro!",
+    color: "bg-primary/20 border-primary"
+  },
+    {
+    icon: Gift,
+    title: "Gift ki Chinta",
+    text: "Gift? Vo sab chodo, bas ye yaad rakhna ki remote aaj mera hai. Happy Rakhi!",
+    color: "bg-blue-100 border-blue-300"
+  },
+   {
+    icon: Heart,
+    title: "Dil Se",
+    text: "Duniya ka sabse anmol bandhan. Tere jaisa bhai/behen kismat walon ko milta hai.",
+    color: "bg-pink-100 border-pink-300"
+  },
+   {
+    icon: Sparkles,
+    title: "Secret Keeper",
+    text: "Mere saare secrets ka vault hai tu. Is Rakhi, let's make more memories to hide!",
+    color: "bg-purple-100 border-purple-300"
+  }
+];
 
 export default function CreateAlbumPage() {
   const [memories, setMemories] = useState<MemoryInput[]>([
@@ -138,7 +178,7 @@ export default function CreateAlbumPage() {
               {memories.map((memory, index) => (
                 <div
                   key={memory.id}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start border-b border-border/50 pb-6"
+                  className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start border-b border-border/50 pb-6 relative"
                 >
                   <div className="flex flex-col items-center">
                     <div className="relative w-40 h-40 aspect-square rounded-lg overflow-hidden shadow-md">
@@ -201,7 +241,7 @@ export default function CreateAlbumPage() {
                      <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute right-4 self-center text-muted-foreground hover:text-destructive"
+                      className="absolute top-0 right-0 text-muted-foreground hover:text-destructive"
                       onClick={() => handleRemoveMemoryField(memory.id)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -219,6 +259,27 @@ export default function CreateAlbumPage() {
               </div>
             </CardContent>
           </Card>
+
+          <section className="w-full max-w-5xl mx-auto mt-20 py-12">
+            <h2 className="text-3xl font-headline text-center mb-2 text-primary-foreground/90 text-shadow-custom">Kuch Khatti Meethi Yaadein</h2>
+            <p className="text-center text-muted-foreground mb-8">Need some inspiration? Here are some fun ideas for your wishes!</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {inspirationCards.map((card, index) => (
+                <div key={index} className="inspiration-card">
+                  <Card className={`h-full ${card.color} bg-opacity-70 backdrop-blur-sm overflow-hidden`}>
+                    <CardContent className="p-6 flex flex-col items-center text-center">
+                      <div className="p-4 bg-white/50 rounded-full mb-4">
+                        <card.icon className="w-8 h-8 text-primary-foreground/70" />
+                      </div>
+                      <h3 className="text-lg font-headline font-semibold text-primary-foreground">{card.title}</h3>
+                      <p className="mt-2 text-sm text-foreground/80">{card.text}</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
+          </section>
+
         </main>
         <Footer />
       </div>
