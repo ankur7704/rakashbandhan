@@ -146,10 +146,11 @@ export default function AlbumPage() {
   };
 
   const getCardStyle = (index: number, total: number) => {
+    if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.max(total * 50, 300); // Adjust radius based on number of cards
-    const transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(-50%)`;
-    const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) translateY(-50%) scale(1.1)`;
+    const radius = Math.min(total * 50, 400); // Adjust radius based on number of cards, with a max
+    const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+    const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
     return {
       transform,
       '--transform-hover': transformHover,
