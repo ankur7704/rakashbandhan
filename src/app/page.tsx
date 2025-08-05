@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -11,8 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Trash2, ImagePlus, ArrowRight, Sparkles, Heart, Gift } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { PlusCircle, Trash2, ImagePlus, ArrowRight, Sparkles, Heart, Gift, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SweetsIcon, BrotherSisterIcon, RakhiIcon } from '@/components/icons';
 
@@ -61,6 +62,7 @@ const inspirationCards = [
 ];
 
 export default function CreateAlbumPage() {
+  const [creatorName, setCreatorName] = useState('');
   const [memories, setMemories] = useState<MemoryInput[]>([
     {
       id: 1,
@@ -137,7 +139,15 @@ export default function CreateAlbumPage() {
   };
 
   const handleSubmit = () => {
-    // Basic validation
+    if (!creatorName) {
+        toast({
+            variant: "destructive",
+            title: "Naam Toh Batayein!",
+            description: "Kripya album banane wale ka naam likhein."
+        });
+        return;
+    }
+
     if (memories.some(mem => !mem.imageDescription || !mem.year)) {
         toast({
             variant: "destructive",
@@ -158,8 +168,7 @@ export default function CreateAlbumPage() {
       dataAiHint: mem.imageDescription.split(' ').slice(0, 2).join(' '),
     }));
 
-    // Using localStorage to pass memories to the album page
-    // This is a simple solution for client-side data passing without a backend
+    localStorage.setItem('raksha-bandhan-creator', JSON.stringify(creatorName));
     localStorage.setItem('raksha-bandhan-memories', JSON.stringify(memoriesForAlbum));
     localStorage.setItem('raksha-bandhan-album-created', 'true');
 
@@ -177,8 +186,24 @@ export default function CreateAlbumPage() {
               <CardTitle className="font-headline text-3xl text-center text-primary-foreground/90">
                 Apna Digital Rakhi Album Banaayein
               </CardTitle>
+               <CardDescription className="text-center text-muted-foreground pt-2">
+                Pyaar bhari yaadon ka ek sangrah, sirf aapke liye.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
+                <div className="space-y-2 border-b border-border/50 pb-6">
+                    <Label htmlFor="creator-name" className="text-base font-medium flex items-center gap-2">
+                       <User className="h-5 w-5 text-primary"/> Yeh Album Kaun Bana Raha Hai?
+                    </Label>
+                    <Input 
+                        id="creator-name" 
+                        placeholder="Aapka poora naam"
+                        value={creatorName}
+                        onChange={(e) => setCreatorName(e.target.value)}
+                        className="max-w-md"
+                    />
+                </div>
+
               {memories.map((memory, index) => (
                 <div
                   key={memory.id}

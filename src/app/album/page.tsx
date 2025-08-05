@@ -31,6 +31,7 @@ const yearThoughts = [
 
 export default function AlbumPage() {
   const [memories, setMemories] = useState<Memory[]>([]);
+  const [creatorName, setCreatorName] = useState<string>('Abhishek Kumar');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImageGeneratorOpen, setIsImageGeneratorOpen] = useState(false);
   const [selectedMemoryForImage, setSelectedMemoryForImage] = useState<Memory | null>(null);
@@ -60,7 +61,13 @@ export default function AlbumPage() {
   useEffect(() => {
     try {
       const storedMemories = localStorage.getItem('raksha-bandhan-memories');
+      const storedCreator = localStorage.getItem('raksha-bandhan-creator');
+
       if (storedMemories) {
+        if(storedCreator) {
+          setCreatorName(JSON.parse(storedCreator));
+        }
+
         const parsedMemories: Memory[] = JSON.parse(storedMemories);
         const memoriesWithStyles = parsedMemories.map((mem) => ({
           ...mem,
@@ -234,7 +241,7 @@ export default function AlbumPage() {
           </div>
         </main>
         
-        <section className="w-full max-w-6xl mx-auto mt-16 py-12 px-4 sm:px-6 lg:px-8">
+        <section className="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-headline text-center mb-4 text-primary-foreground/90 text-shadow-custom">Yaadon Ka Safar</h2>
             <div className="memory-bus-container">
               <div className="memory-bus-aisle"></div>
@@ -279,7 +286,7 @@ export default function AlbumPage() {
             </div>
           </section>
 
-        <Footer />
+        <Footer creatorName={creatorName} />
         <div className="fixed bottom-5 right-5 z-20">
             <Button onClick={toggleMusic} variant="outline" size="icon" className="rounded-full shadow-lg">
                 {isMusicPlaying ? <Volume2 /> : <VolumeX />}
@@ -311,5 +318,3 @@ export default function AlbumPage() {
     </>
   );
 }
-
-    
