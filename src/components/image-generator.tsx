@@ -88,10 +88,15 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
                                     className="object-contain h-full w-full"
                                     onError={(e) => {
                                         e.currentTarget.style.display = 'none'; // Hide broken image icon
-                                        setError('Generated image could not be loaded.');
+                                        const parent = e.currentTarget.parentElement;
+                                        if (parent) {
+                                            const errorDiv = document.createElement('div');
+                                            errorDiv.className = 'text-destructive text-sm p-4';
+                                            errorDiv.innerText = 'Generated image could not be loaded. It might be an invalid format.';
+                                            parent.appendChild(errorDiv);
+                                        }
                                     }}
                                 />
-                                {error && <div className="text-destructive text-sm p-4">{error}</div>}
                             </div>
                             {wish && <p className="mt-4 text-lg font-headline text-primary-foreground/90 italic">"{wish}"</p>}
                             <div className="flex justify-center mt-4">

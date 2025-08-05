@@ -88,6 +88,6 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
         if (errorMessage.includes('API key not valid')) {
             return { imageUrl: '', wish: '', status: 'failed', error: 'Di gayi API Key galat hai. Kripya sahi key daalein.' };
         }
-        return { imageUrl: '', wish: '', status: 'failed', error: errorMessage };
+        return { imageUrl: '', wish: '', status: 'failed', error: 'AI se image banate waqt kuch gadbad ho gayi. Kripya dobara koshish karein.' };
     }
 }
