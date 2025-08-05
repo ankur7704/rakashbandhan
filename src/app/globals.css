@@ -140,9 +140,6 @@
   }
   
   /* Make back cards transparent */
-  .carousel-card {
-    opacity: 1;
-  }
   .carousel-card.is-back {
     opacity: 0.4;
   }
