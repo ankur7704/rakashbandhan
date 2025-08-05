@@ -15,36 +15,18 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui/button';
-import { Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 
-const thoughtCards = [
-    {
-      quote: "Bhai-behen ka rishta Tom & Jerry jaisa hota hai, ladte bhi hain aur ek dusre ke bina reh bhi nahi sakte!",
-      color: "bg-secondary/20 border-secondary"
-    },
-    {
-      quote: "Rakhi sirf ek dhaaga nahi, ek vaada hai... ki main tera saara chocolates chura lunga/lungi!",
-      color: "bg-accent/20 border-accent"
-    },
-    {
-      quote: "Duniya mein sabse best feeling? Jab aapka bhai/behen aapke secret keeper hote hain.",
-      color: "bg-primary/20 border-primary"
-    },
-    {
-      quote: "Door ho ya paas, Rakhi ke din toh special discount on 'emotional atyachar' milta hi hai!",
-      color: "bg-blue-100 border-blue-300"
-    },
-    {
-      quote: "Is Rakhi, Bhagwan se prarthna hai ki agle janam mein bhi mujhe yahi idiot bhai/behen mile.",
-      color: "bg-pink-100 border-pink-300"
-    },
-    {
-      quote: "Remote ki ladai se lekar life ke har support tak, yeh bandhan anmol hai.",
-      color: "bg-purple-100 border-purple-300"
-    }
-  ];
+const yearThoughts = [
+    "Is saal ka best moment? Jab remote ke liye ladai nahi hui!",
+    "Puraane din... jab 5 rupaye ki chocolate mein duniya ki saari khushi thi.",
+    "Yaad hai yeh din? Iske baad hi toh saare secrets leak hue the!",
+    "Yeh woh time tha jab 'social distancing' ka matlab tha behen/bhai se 2 kamre door rehna.",
+    "Is saal ki Rakhi... gift mila ya sirf aashirwaad?",
+    "Ek aur saal nikal gaya, par nok-jhok ka syllabus abhi bhi same hai."
+];
 
 export default function AlbumPage() {
   const [memories, setMemories] = useState<Memory[]>([]);
@@ -67,7 +49,11 @@ export default function AlbumPage() {
     return acc;
   }, {} as Record<string, Memory[]>);
 
-  const sortedYears = Object.keys(memoriesByYear).sort((a, b) => parseInt(b) - parseInt(a));
+  const sortedYears = Object.keys(memoriesByYear).sort((a, b) => {
+      if (a === "Purani Yaadein") return 1;
+      if (b === "Purani Yaadein") return -1;
+      return parseInt(b) - parseInt(a);
+  });
 
 
   useEffect(() => {
@@ -248,18 +234,24 @@ export default function AlbumPage() {
         </main>
         
         <section className="w-full max-w-6xl mx-auto mt-16 py-12 px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-headline text-center mb-12 text-primary-foreground/90 text-shadow-custom">Samay Ki Yaadein</h2>
+            <h2 className="text-3xl font-headline text-center mb-12 text-primary-foreground/90 text-shadow-custom">Yaadon Ka Safar</h2>
             <div className="memory-bus-container">
               <div className="memory-bus-aisle"></div>
-              {sortedYears.map((year) => (
+              {sortedYears.map((year, yearIndex) => (
                 <div key={year} className="memory-bus-year-group">
-                  <div className="memory-bus-year-marker">{year}</div>
+                  <div className="memory-bus-year-marker">
+                    <span>{year}</span>
+                  </div>
+                   <div className="memory-bus-thought">
+                        <Quote className="w-5 h-5 text-accent/80" />
+                        <p className="italic text-center text-sm text-muted-foreground">{yearThoughts[yearIndex % yearThoughts.length]}</p>
+                    </div>
                   <div className="memory-bus-seats">
-                    {memoriesByYear[year].map((memory, memoryIndex) => (
+                    {memoriesByYear[year].map((memory) => (
                       <div key={memory.id} className="memory-bus-seat">
-                        <Card className="group bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full">
-                          <CardContent className="p-4">
-                            <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md mb-4">
+                        <Card className="group bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 w-full hover:-translate-y-1">
+                          <CardContent className="p-3">
+                            <div className="relative w-full aspect-video rounded-md overflow-hidden shadow-inner mb-3">
                               <Image
                                 src={memory.imageUrl}
                                 alt={memory.imageDescription}
@@ -269,13 +261,13 @@ export default function AlbumPage() {
                               />
                               <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                 <Button variant="secondary" onClick={() => handleOpenImageGenerator(memory)}>
-                                  <Sparkles className="mr-2"/>
-                                  Magic Moment Banayein
+                                  <Sparkles className="mr-2 h-4 w-4"/>
+                                  Magic Moment
                                 </Button>
                               </div>
                             </div>
-                            <h3 className="font-headline text-lg text-primary-foreground/90">{memory.imageDescription}</h3>
-                            <p className="text-sm text-muted-foreground mt-2 italic">"{memory.wish || thoughtCards[memoryIndex % thoughtCards.length].quote}"</p>
+                            <h3 className="font-headline text-md text-primary-foreground/90 leading-tight">{memory.imageDescription}</h3>
+                            <p className="text-xs text-muted-foreground mt-1 italic">"{memory.wish || 'Ek yaadgaar pal!'}"</p>
                           </CardContent>
                         </Card>
                       </div>
