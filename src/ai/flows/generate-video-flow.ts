@@ -7,7 +7,7 @@
 
 import {ai} from '@/ai/genkit';
 import type { GenerateVideoInput } from '@/types';
-import { googleAI, getGoogleAIConfig } from '@genkit-ai/googleai';
+import { googleAI } from '@genkit-ai/googleai';
 
 export async function generateVideo(input: GenerateVideoInput): Promise<any> {
     console.log("Starting video generation for:", input.prompt);
@@ -64,14 +64,13 @@ export async function checkVideoStatus(videoId: string): Promise<any> {
                 throw new Error('Generated video not found in operation result');
             }
 
-            const config = getGoogleAIConfig();
-            if (!config.apiKey) {
-                throw new Error('Google AI API key is not configured in Genkit.');
+            if (!process.env.GEMINI_API_KEY) {
+                throw new Error('GEMINI_API_KEY environment variable is not set.');
             }
 
             const fetch = (await import('node-fetch')).default;
             const videoDownloadResponse = await fetch(
-              `${video.media.url}&key=${config.apiKey}`
+              `${video.media.url}&key=${process.env.GEMINI_API_KEY}`
             );
             
             if (!videoDownloadResponse.ok || !videoDownloadResponse.body) {
