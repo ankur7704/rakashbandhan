@@ -15,6 +15,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
+import confetti from 'canvas-confetti';
+
 
 const thoughtCards = [
     {
@@ -60,11 +62,27 @@ export default function AlbumPage() {
         scale: 1,
       }));
       setMemories(memoriesWithStyles);
+
+      const isFirstCreation = localStorage.getItem('raksha-bandhan-album-created') === 'true';
+      if(isFirstCreation){
+        toast({
+            title: "Happy Raksha Bandhan! 🎉",
+            description: "Aapka khoobsurat yaadon ka album taiyaar hai.",
+            duration: 5000,
+        });
+        confetti({
+            particleCount: 150,
+            spread: 180,
+            origin: { y: 0.6 }
+        });
+        localStorage.removeItem('raksha-bandhan-album-created');
+      }
+
     } else {
       // If no memories are found, redirect back to the creation page
       router.push('/');
     }
-  }, [router]);
+  }, [router, toast]);
 
   const handleOpenModal = (memory: Memory | null) => {
     setEditingMemory(memory);
@@ -148,7 +166,7 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.min(total * 50, 400); // Adjust radius based on number of cards, with a max
+    const radius = Math.min(total * 40, 320); // Adjust radius based on number of cards
     const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
     return {

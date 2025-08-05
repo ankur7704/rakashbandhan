@@ -158,6 +158,7 @@ export default function CreateAlbumPage() {
     // Using localStorage to pass memories to the album page
     // This is a simple solution for client-side data passing without a backend
     localStorage.setItem('raksha-bandhan-memories', JSON.stringify(memoriesForAlbum));
+    localStorage.setItem('raksha-bandhan-album-created', 'true');
 
     router.push('/album');
   };
