@@ -54,7 +54,7 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
               return (
                   <div className="flex flex-col items-center justify-center text-center p-8">
                       <div className="relative w-40 h-40 rounded-lg overflow-hidden mb-4 shadow-md">
-                          <Image src={memory.imageUrl} alt="Original memory" layout="fill" objectFit="cover" />
+                          <Image src={memory.imageUrl} alt="Original memory" fill objectFit="cover" />
                       </div>
                       <Sparkles className="w-12 h-12 text-primary mb-2"/>
                       <h2 className="text-xl font-headline mb-2">Ek Jaadui Pal Banayein</h2>
