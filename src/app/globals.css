@@ -91,8 +91,6 @@
 
   .carousel-container {
     perspective: 3000px;
-    width: 100%;
-    height: 400px;
     position: relative;
     margin: 0 auto;
   }
@@ -134,32 +132,33 @@
   .carousel-card:hover {
     transform: var(--transform-hover) !important;
     z-index: 100;
-    opacity: 1;
+    opacity: 1 !important;
   }
   
   .carousel-card > div {
     transition: opacity 0.5s ease;
   }
   
-  .carousel-card[style*="rotateY(90deg)"] > div,
-  .carousel-card[style*="rotateY(100deg)"] > div,
-  .carousel-card[style*="rotateY(110deg)"] > div,
-  .carousel-card[style*="rotateY(120deg)"] > div,
-  .carousel-card[style*="rotateY(130deg)"] > div,
-  .carousel-card[style*="rotateY(140deg)"] > div,
-  .carousel-card[style*="rotateY(150deg)"] > div,
-  .carousel-card[style*="rotateY(160deg)"] > div,
-  .carousel-card[style*="rotateY(170deg)"] > div,
-  .carousel-card[style*="rotateY(180deg)"] > div,
-  .carousel-card[style*="rotateY(190deg)"] > div,
-  .carousel-card[style*="rotateY(200deg)"] > div,
-  .carousel-card[style*="rotateY(210deg)"] > div,
-  .carousel-card[style*="rotateY(220deg)"] > div,
-  .carousel-card[style*="rotateY(230deg)"] > div,
-  .carousel-card[style*="rotateY(240deg)"] > div,
-  .carousel-card[style*="rotateY(250deg)"] > div,
-  .carousel-card[style*="rotateY(260deg)"] > div,
-  .carousel-card[style*="rotateY(270deg)"] > div {
+  /* Make back cards transparent */
+  .carousel-card[style*="rotateY(90deg)"],
+  .carousel-card[style*="rotateY(100deg)"],
+  .carousel-card[style*="rotateY(110deg)"],
+  .carousel-card[style*="rotateY(120deg)"],
+  .carousel-card[style*="rotateY(130deg)"],
+  .carousel-card[style*="rotateY(140deg)"],
+  .carousel-card[style*="rotateY(150deg)"],
+  .carousel-card[style*="rotateY(160deg)"],
+  .carousel-card[style*="rotateY(170deg)"],
+  .carousel-card[style*="rotateY(180deg)"],
+  .carousel-card[style*="rotateY(190deg)"],
+  .carousel-card[style*="rotateY(200deg)"],
+  .carousel-card[style*="rotateY(210deg)"],
+  .carousel-card[style*="rotateY(220deg)"],
+  .carousel-card[style*="rotateY(230deg)"],
+  .carousel-card[style*="rotateY(240deg)"],
+  .carousel-card[style*="rotateY(250deg)"],
+  .carousel-card[style*="rotateY(260deg)"],
+  .carousel-card[style*="rotateY(270deg)"] {
     opacity: 0.4;
   }
 
@@ -193,9 +192,18 @@
   }
 
   .timeline-item {
+    display: flex;
+    flex-direction: column;
     animation: slideInUp 0.6s ease-out forwards;
     opacity: 0;
     transform: translateY(30px);
+  }
+
+  .timeline-item:nth-child(odd) {
+    animation-delay: 0.1s;
+  }
+  .timeline-item:nth-child(even) {
+      animation-delay: 0.2s;
   }
 
   @keyframes slideInUp {
@@ -204,4 +212,15 @@
           transform: translateY(0);
       }
   }
+
+  .timeline-year-marker {
+    animation: popIn 0.5s ease-out 0.3s forwards;
+    transform: scale(0);
+  }
+  @keyframes popIn {
+      to {
+          transform: scale(1);
+      }
+  }
+
 }

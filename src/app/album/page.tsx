@@ -8,14 +8,14 @@ import Footer from '@/components/footer';
 import BackgroundAnimations from '@/components/background-animations';
 import MemoryCard from '@/components/memory-card';
 import MemoryForm from '@/components/memory-form';
+import VideoGenerator from '@/components/video-generator';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { generateWishAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui/button';
-import { Volume2, VolumeX, CalendarIcon } from 'lucide-react';
+import { Volume2, VolumeX, Clapperboard } from 'lucide-react';
 
 
 const thoughtCards = [
@@ -48,6 +48,8 @@ const thoughtCards = [
 export default function AlbumPage() {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isvideoGeneratorOpen, setIsVideoGeneratorOpen] = useState(false);
+  const [selectedMemoryForVideo, setSelectedMemoryForVideo] = useState<Memory | null>(null);
   const [editingMemory, setEditingMemory] = useState<Memory | null>(null);
   const { toast } = useToast();
   const router = useRouter();
@@ -86,9 +88,10 @@ export default function AlbumPage() {
               duration: 5000,
           });
           confetti({
-              particleCount: 150,
+              particleCount: 200,
               spread: 180,
-              origin: { y: 0.6 }
+              origin: { y: 0.6 },
+              scalar: 1.2
           });
           localStorage.removeItem('raksha-bandhan-album-created');
         }
@@ -105,6 +108,11 @@ export default function AlbumPage() {
   const handleOpenModal = (memory: Memory | null) => {
     setEditingMemory(memory);
     setIsModalOpen(true);
+  };
+
+  const handleOpenVideoGenerator = (memory: Memory) => {
+    setSelectedMemoryForVideo(memory);
+    setIsVideoGeneratorOpen(true);
   };
   
   const handleSaveMemory = async (formData: {
@@ -132,42 +140,6 @@ export default function AlbumPage() {
       setMemories(updatedMemories);
       localStorage.setItem('raksha-bandhan-memories', JSON.stringify(updatedMemories));
       toast({ title: "Yaad Update Ho Gayi!", description: "Aapki khoobsurat yaad save ho gayi hai." });
-    } else {
-      // This part might not be used anymore since we add from the main page
-      // But keeping it for robustness
-      if (!imageUrl) {
-        imageUrl = 'https://placehold.co/600x400.png';
-      }
-      
-      let finalWish = formData.wish;
-      if (!finalWish && formData.imageDescription) {
-        try {
-          const result = await generateWishAction({ imageDescription: formData.imageDescription });
-          if (result?.wish) {
-            finalWish = result.wish;
-          } else {
-            throw new Error('Could not generate a wish.');
-          }
-        } catch (error) {
-          toast({ variant: "destructive", title: "AI Se Garbad", description: "Sandesh nahi ban paaya. Phir se koshish karein." });
-          return;
-        }
-      }
-
-      const newMemory: Memory = {
-        id: new Date().toISOString(),
-        imageUrl,
-        imageDescription: formData.imageDescription,
-        wish: finalWish,
-        year: formData.year,
-        rotation: 0,
-        scale: 1,
-        dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
-      };
-      const newMemories = [...memories, newMemory];
-      setMemories(newMemories);
-      localStorage.setItem('raksha-bandhan-memories', JSON.stringify(newMemories));
-      toast({ title: "Nayi Yaad Jud Gayi!", description: "Ek aur anmol pal aapke album mein jud gaya hai." });
     }
     setIsModalOpen(false);
     setEditingMemory(null);
@@ -185,7 +157,7 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.min(total * 60, 400); // Increased radius
+    const radius = Math.min(total * 45, 300);
     const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
     return {
@@ -207,7 +179,7 @@ export default function AlbumPage() {
 
   if (!memories.length) {
     return (
-       <div className="flex items-center justify-center min-h-screen">
+       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
@@ -220,10 +192,10 @@ export default function AlbumPage() {
           Aapka browser audio element ko support nahi karta.
       </audio>
       <BackgroundAnimations />
-      <div className="relative z-10 flex min-h-screen flex-col px-4 pt-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 flex min-h-screen flex-col pt-8">
         <Header />
-        <main className="flex-grow flex flex-col items-center justify-center">
-          <div className="carousel-container my-8 w-full">
+        <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+          <div className="carousel-container my-12 w-full h-[350px]">
             <div className="carousel">
               {memories.map((memory, index) => (
                 <div
@@ -242,30 +214,36 @@ export default function AlbumPage() {
           </div>
         </main>
         
-        <section className="w-full max-w-6xl mx-auto mt-20 py-12">
+        <section className="w-full max-w-6xl mx-auto mt-16 py-12 px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-headline text-center mb-12 text-primary-foreground/90 text-shadow-custom">Samay Ki Yaadein</h2>
-            <div className="relative pl-8">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-full md:left-1/2 md:-translate-x-1/2"></div>
+            <div className="relative pl-8 md:pl-0">
+              <div className="absolute left-4 top-0 bottom-0 w-1 bg-primary/20 rounded-full md:left-1/2 md:-translate-x-1/2"></div>
               {sortedYears.map((year, yearIndex) => (
-                <div key={year} className="mb-12">
-                    <div className="timeline-year-marker absolute -left-4 h-8 w-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold shadow-md md:left-1/2 md:-translate-x-1/2">
-                       {year}
+                <div key={year} className="mb-16">
+                    <div className="timeline-year-marker absolute left-0 top-0 h-8 w-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold shadow-md md:left-1/2 md:-translate-x-1/2">
+                       {year.substring(2)}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8">
+                    <div className={`mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12`}>
                       {memoriesByYear[year].map((memory, memoryIndex) => {
-                          const isLeft = yearIndex % 2 === 0 ? memoryIndex % 2 === 0 : memoryIndex % 2 !== 0;
+                          const isLeft = memoryIndex % 2 === 0;
                           return (
-                            <div key={memory.id} className={`timeline-item ${isLeft ? 'md:col-start-1' : 'md:col-start-2'}`}>
-                                <Card className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                            <div key={memory.id} className={`timeline-item ${isLeft ? 'md:col-start-1 md:items-end' : 'md:col-start-2 md:items-start'}`}>
+                                <Card className="group bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full max-w-sm">
                                     <CardContent className="p-4">
                                       <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md mb-4">
                                         <Image
                                             src={memory.imageUrl}
                                             alt={memory.imageDescription}
                                             fill
-                                            className="object-cover"
+                                            className="object-cover transition-transform duration-300 group-hover:scale-105"
                                             data-ai-hint={memory.dataAiHint}
                                           />
+                                          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                              <Button variant="secondary" onClick={() => handleOpenVideoGenerator(memory)}>
+                                                  <Clapperboard className="mr-2"/>
+                                                  Video Banaayein
+                                              </Button>
+                                          </div>
                                       </div>
                                       <h3 className="font-headline text-lg text-primary-foreground/90">{memory.imageDescription}</h3>
                                       <p className="text-sm text-muted-foreground mt-2 italic">"{memory.wish || thoughtCards[memoryIndex % thoughtCards.length].quote}"</p>
@@ -282,7 +260,7 @@ export default function AlbumPage() {
 
         <Footer />
         <div className="fixed bottom-5 right-5 z-20">
-            <Button onClick={toggleMusic} variant="outline" size="icon" className="rounded-full">
+            <Button onClick={toggleMusic} variant="outline" size="icon" className="rounded-full shadow-lg">
                 {isMusicPlaying ? <Volume2 /> : <VolumeX />}
                 <span className="sr-only">Music On/Off</span>
             </Button>
@@ -301,6 +279,13 @@ export default function AlbumPage() {
             onClose={() => setIsModalOpen(false)}
           />
         </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isvideoGeneratorOpen} onOpenChange={setIsVideoGeneratorOpen}>
+          <DialogContent className="max-w-md p-0">
+              <DialogTitle className="sr-only">Video Generator</DialogTitle>
+              {selectedMemoryForVideo && <VideoGenerator memory={selectedMemoryForVideo} onClose={() => setIsVideoGeneratorOpen(false)} />}
+          </DialogContent>
       </Dialog>
     </>
   );
