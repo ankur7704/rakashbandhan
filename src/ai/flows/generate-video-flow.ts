@@ -46,7 +46,11 @@ export async function generateVideo(input: GenerateVideoInput): Promise<any> {
 
     } catch(e) {
         console.error("Error starting video generation:", e);
-        return { videoId: '', status: 'failed', error: (e as Error).message };
+        const errorMessage = (e as Error).message;
+        if (errorMessage.includes('billing')) {
+             return { videoId: '', status: 'failed', error: 'Video model istemaal karne ke liye aapke Google Cloud account par billing chalu hona zaroori hai. Kripya apne account settings check karein.' };
+        }
+        return { videoId: '', status: 'failed', error: errorMessage };
     }
 }
 
@@ -66,7 +70,11 @@ export async function checkVideoStatus(videoId: string): Promise<any> {
         
         if (operation.error) {
             console.error('Video generation failed:', operation.error);
-            return { videoId, status: 'failed', error: operation.error.message };
+             const errorMessage = operation.error.message;
+            if (errorMessage.includes('billing')) {
+                return { videoId, status: 'failed', error: 'Video model istemaal karne ke liye aapke Google Cloud account par billing chalu hona zaroori hai.' };
+            }
+            return { videoId, status: 'failed', error: errorMessage };
         }
 
         if (operation.done) {
