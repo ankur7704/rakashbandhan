@@ -13,6 +13,7 @@ export type Memory = {
 
 export const GenerateImageInputSchema = z.object({
   prompt: z.string().describe('A prompt to guide the image generation.'),
+  imageDataUri: z.string().describe("The original image to use for video generation, as a data URI."),
 });
 export type GenerateImageInput = z.infer<typeof GenerateImageInputSchema>;
 

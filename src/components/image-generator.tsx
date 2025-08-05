@@ -30,6 +30,7 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
     try {
       const result = await generateImageAction({
           prompt: `Ek bhai aur behen, ${memory.imageDescription}`,
+          imageDataUri: memory.imageUrl,
       });
 
       if (result.status === 'completed' && result.imageUrl) {
@@ -58,7 +59,7 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
                       </div>
                       <Sparkles className="w-12 h-12 text-primary mb-2"/>
                       <h2 className="text-xl font-headline mb-2">Ek Jaadui Pal Banayein</h2>
-                      <p className="text-muted-foreground mb-6">Is yaad ke description se AI ko ek mazedaar cartoon image banane dein.</p>
+                      <p className="text-muted-foreground mb-6">Is original photo ka istemaal karke AI ko ek mazedaar cartoon image banane dein.</p>
                       <Button onClick={handleGenerateClick}>
                           <Sparkles className="mr-2"/> Abhi Banayein
                       </Button>

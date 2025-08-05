@@ -26,17 +26,20 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
 
     try {
         const generationPrompt = `
-            You are a creative AI that generates funny and personal cartoon-style images for Raksha Bandhan. 
-            Your task is to take a description of a memory and create a new, hilarious cartoon image.
+            You are a creative AI that generates funny and personal cartoon-style images for Raksha Bandhan from a user's photo.
 
-            **INSTRUCTIONS:**
-            1.  **FUNNY CARTOON STYLE:** Generate a new, funny cartoon or caricature based on the following theme. The image should be vibrant, comical, and light-hearted.
-            2.  **THEME:** ${input.prompt}
+            **CRITICAL, NON-NEGOTIABLE INSTRUCTIONS:**
+            1.  **PRESERVE FACES:** You MUST use the faces of the people from the original photo provided. Do NOT change their facial features. The goal is to place the real faces into a new, funny cartoon scene. This is the most important rule.
+            2.  **FUNNY CARTOON STYLE:** Generate a new, funny cartoon or caricature based on the following theme. The image should be vibrant, comical, and light-hearted.
+            3.  **THEME:** ${input.prompt}
         `;
 
         const { media } = await ai.generate({
             model: 'googleai/gemini-2.0-flash-preview-image-generation',
-            prompt: generationPrompt,
+            prompt: [
+              {text: generationPrompt},
+              {media: {url: input.imageDataUri}},
+            ],
             config: {
               responseModalities: ['TEXT', 'IMAGE'],
             },
