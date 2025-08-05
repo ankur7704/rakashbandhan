@@ -88,4 +88,18 @@
   .text-shadow-custom {
     text-shadow: 2px 2px 4px hsl(var(--primary) / 0.5);
   }
+
+  .animate-rotate-3d {
+    animation: rotate-3d 20s linear infinite;
+    transform-style: preserve-3d;
+  }
+
+  @keyframes rotate-3d {
+    from {
+      transform: perspective(800px) rotateY(0deg);
+    }
+    to {
+      transform: perspective(800px) rotateY(360deg);
+    }
+  }
 }

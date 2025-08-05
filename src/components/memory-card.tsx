@@ -24,7 +24,7 @@ const MemoryCard = ({ memory, onClick }: MemoryCardProps) => {
       >
         <Pin className="absolute -top-3 -right-2 h-8 w-8 text-accent/70 -rotate-12 transform-gpu transition-transform group-hover:rotate-0 group-hover:scale-110" />
         <CardContent className="p-0">
-          <div className="relative aspect-square w-full">
+          <div className="relative aspect-square w-full animate-rotate-3d">
             <Image
               src={memory.imageUrl}
               alt={memory.imageDescription}
