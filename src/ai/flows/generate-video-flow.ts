@@ -3,32 +3,11 @@
  * @fileOverview Generates a short video from an image using AI.
  *
  * - generateVideoFromImage - A function that handles the video generation process.
- * - GenerateVideoInput - The input type for the generateVideoFromImage function.
- * - GenerateVideoOutput - The return type for the generateVideoFromImage function.
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import type { GenerateVideoInput } from '@/types';
 import { googleAI } from '@genkit-ai/googleai';
-
-export const GenerateVideoInputSchema = z.object({
-  photoDataUri: z
-    .string()
-    .describe(
-      "A photo of a memory, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
-    ),
-    prompt: z.string().describe('A prompt to guide the video generation.'),
-});
-export type GenerateVideoInput = z.infer<typeof GenerateVideoInputSchema>;
-
-export const GenerateVideoOutputSchema = z.object({
-  videoId: z.string(),
-  status: z.enum(['processing', 'completed', 'failed']),
-  videoUrl: z.string().optional(),
-  error: z.string().optional(),
-});
-export type GenerateVideoOutput = z.infer<typeof GenerateVideoOutputSchema>;
-
 
 export async function generateVideo(input: GenerateVideoInput): Promise<any> {
     console.log("Starting video generation for:", input.prompt);
@@ -39,6 +18,7 @@ export async function generateVideo(input: GenerateVideoInput): Promise<any> {
               {
                 media: {
                   url: input.photoDataUri,
+                  contentType: 'image/jpeg'
                 },
               },
               {
@@ -80,13 +60,13 @@ export async function checkVideoStatus(videoId: string): Promise<any> {
 
         if (operation.done) {
             const video = operation.output?.message?.content.find((p) => !!p.media);
-            if (!video) {
+            if (!video || !video.media) {
                 throw new Error('Generated video not found in operation result');
             }
 
             const fetch = (await import('node-fetch')).default;
             const videoDownloadResponse = await fetch(
-              `${video.media!.url}&key=${process.env.GEMINI_API_KEY}`
+              `${video.media.url}&key=${process.env.GEMINI_API_KEY}`
             );
             
             if (!videoDownloadResponse.ok || !videoDownloadResponse.body) {

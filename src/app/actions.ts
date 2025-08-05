@@ -1,7 +1,8 @@
 'use server';
 
 import { generateRakshaBandhanWish, GenerateRakshaBandhanWishInput } from '@/ai/flows/generate-raksha-bandhan-wish';
-import { generateVideo, checkVideoStatus, GenerateVideoInput } from '@/ai/flows/generate-video-flow';
+import { generateVideo, checkVideoStatus } from '@/ai/flows/generate-video-flow';
+import type { GenerateVideoInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 
 export async function generateWishAction(input: GenerateRakshaBandhanWishInput) {
