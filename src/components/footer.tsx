@@ -14,6 +14,9 @@ const Footer = ({ creatorName = "Abhishek Kumar" }: FooterProps) => {
       <p className="text-sm text-muted-foreground mt-2">
         Bade pyaar se banaya hai - <span className="creator-name">{creatorName}</span> ne
       </p>
+      <p className="text-xs text-muted-foreground/80 mt-4 italic">
+        Abhishek Kumar ki ore se sabhi pyaari behno ko Raksha Bandhan 2025 ki dher saari shubhkaamnayein!
+      </p>
     </footer>
   );
 };
