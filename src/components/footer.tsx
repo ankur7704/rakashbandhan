@@ -6,6 +6,9 @@ const Footer = () => {
       <p className="text-lg text-muted-foreground font-headline">
         This bond is forever 💖
       </p>
+      <p className="text-sm text-muted-foreground mt-2">
+        Created with love by Abhishek Kumar
+      </p>
     </footer>
   );
 };

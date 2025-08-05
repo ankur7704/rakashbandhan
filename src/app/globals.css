@@ -103,7 +103,20 @@
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    animation: rotate-carousel 30s linear infinite;
+  }
+  
+  .carousel-container:hover .carousel {
+    animation-play-state: paused;
+  }
+
+  @keyframes rotate-carousel {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(360deg);
+    }
   }
 
   .carousel-card {
@@ -114,6 +127,12 @@
     height: 400px;
     transform-style: preserve-3d;
     transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.5s, z-index 0.5s;
-    opacity: 0.8;
+    opacity: 0.9;
+  }
+  
+  .carousel-card:hover {
+    transform: var(--transform-hover) !important;
+    z-index: 100;
+    opacity: 1;
   }
 }

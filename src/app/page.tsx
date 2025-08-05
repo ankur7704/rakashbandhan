@@ -7,12 +7,11 @@ import Footer from '@/components/footer';
 import BackgroundAnimations from '@/components/background-animations';
 import MemoryCard from '@/components/memory-card';
 import MemoryForm from '@/components/memory-form';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { PlusCircle, ArrowLeftCircle, ArrowRightCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { PlusCircle } from 'lucide-react';
 import { generateWishAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-
 
 const initialMemoriesData: Omit<Memory, 'rotation' | 'scale'>[] = [
   {
@@ -42,7 +41,6 @@ export default function Home() {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMemory, setEditingMemory] = useState<Memory | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -54,13 +52,9 @@ export default function Home() {
     setMemories(memoriesWithStyles);
   }, []);
 
-  const handleOpenModal = (memory: Memory | null, index: number) => {
-    if (index === activeIndex) {
-      setEditingMemory(memory);
-      setIsModalOpen(true);
-    } else {
-      setActiveIndex(index);
-    }
+  const handleOpenModal = (memory: Memory | null) => {
+    setEditingMemory(memory);
+    setIsModalOpen(true);
   };
   
   const handleAddNew = () => {
@@ -74,6 +68,8 @@ export default function Home() {
     wish: string;
     imagePreview?: string;
   }) => {
+    let imageUrl = formData.imagePreview;
+  
     if (editingMemory) {
       // Edit existing memory
       setMemories(
@@ -83,7 +79,7 @@ export default function Home() {
                 ...mem,
                 imageDescription: formData.imageDescription,
                 wish: formData.wish,
-                imageUrl: formData.imagePreview || mem.imageUrl,
+                imageUrl: imageUrl || mem.imageUrl,
                 dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
               }
             : mem
@@ -92,7 +88,9 @@ export default function Home() {
       toast({ title: "Memory Updated!", description: "Your beautiful memory has been saved." });
     } else {
       // Add new memory
-      let imageUrl = formData.imagePreview || 'https://placehold.co/600x400.png';
+      if (!imageUrl) {
+        imageUrl = 'https://placehold.co/600x400.png';
+      }
       
       let finalWish = formData.wish;
       if (!finalWish && formData.imageDescription) {
@@ -128,39 +126,19 @@ export default function Home() {
   const handleDeleteMemory = (id: string) => {
     const newMemories = memories.filter((mem) => mem.id !== id);
     setMemories(newMemories);
-    if(activeIndex >= newMemories.length) {
-        setActiveIndex(Math.max(0, newMemories.length - 1));
-    }
     toast({ variant: "destructive", title: "Memory Removed", description: "The memory has been removed from your album." });
     setIsModalOpen(false);
     setEditingMemory(null);
   };
 
-  const rotateCarousel = (direction: 'next' | 'prev') => {
-    const totalMemories = memories.length;
-    if (totalMemories === 0) return;
-    setActiveIndex(prev => {
-        const newIndex = direction === 'next' ? prev + 1 : prev -1;
-        // circular navigation
-        return (newIndex + totalMemories) % totalMemories;
-    })
-  };
-
-  const getCardStyle = (index: number) => {
-    const offset = index - activeIndex;
-    const isVisible = Math.abs(offset) < 3;
-    
-    const xOffset = offset * 200;
-    const scale = offset === 0 ? 1.1 : 0.8;
-    const rotationY = offset * -25;
-    const zIndex = memories.length - Math.abs(offset);
-    const opacity = isVisible ? 1 : 0;
-  
+  const getCardStyle = (index: number, total: number) => {
+    const angle = (360 / total) * index;
+    const radius = total * 50; // Adjust radius based on number of cards
+    const transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(-50%)`;
+    const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) translateY(-50%) scale(1.1)`;
     return {
-      transform: `translateX(calc(-50% + ${xOffset}px)) translateY(-50%) rotateY(${rotationY}deg) scale(${scale})`,
-      zIndex: zIndex,
-      opacity: opacity,
-      pointerEvents: isVisible ? 'auto' : 'none'
+      transform,
+      '--transform-hover': transformHover,
     };
   };
 
@@ -176,18 +154,18 @@ export default function Home() {
                 <div
                   key={memory.id}
                   className="carousel-card"
-                  style={getCardStyle(index)}
-                  onClick={() => handleOpenModal(memory, index)}
+                  style={getCardStyle(index, memories.length + 1) as React.CSSProperties}
+                  onClick={() => handleOpenModal(memory)}
                 >
                   <MemoryCard
                     memory={memory}
-                    isActive={index === activeIndex}
+                    isActive={true} // All cards are interactive in this view
                   />
                 </div>
               ))}
               <div
                 className="carousel-card"
-                style={getCardStyle(memories.length)}
+                style={getCardStyle(memories.length, memories.length + 1) as React.CSSProperties}
               >
                 <div
                   className="flex h-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 bg-primary/10 p-8 text-center text-primary/80 transition-all duration-300 hover:border-primary hover:bg-primary/20 hover:text-primary hover:shadow-xl"
@@ -205,12 +183,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-center gap-8 mt-8">
-            <Button variant="ghost" size="icon" onClick={() => rotateCarousel('prev')} className="h-16 w-16 text-primary hover:text-primary-foreground">
-              <ArrowLeftCircle className="h-12 w-12" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => rotateCarousel('next')} className="h-16 w-16 text-primary hover:text-primary-foreground">
-              <ArrowRightCircle className="h-12 w-12" />
-            </Button>
+             <p className="text-muted-foreground text-center">Hover over a card to pause and click to edit.</p>
           </div>
         </main>
         <Footer />
@@ -218,6 +191,9 @@ export default function Home() {
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-3xl p-0">
+         <DialogTitle className="sr-only">
+            {editingMemory ? 'Edit this Memory' : 'Create a New Memory'}
+          </DialogTitle>
           <MemoryForm
             memoryToEdit={editingMemory}
             onSave={handleSaveMemory}
