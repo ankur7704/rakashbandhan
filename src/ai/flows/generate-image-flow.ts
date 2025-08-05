@@ -18,9 +18,15 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
     }
 
     try {
+        const promptParts: (string | { media: { url: string; }; })[] = [{text: input.prompt}];
+        
+        if (input.imageDataUri) {
+            promptParts.unshift({ media: { url: input.imageDataUri } });
+        }
+        
         const { media } = await ai.generate({
           model: 'googleai/gemini-2.0-flash-preview-image-generation',
-          prompt: `A beautiful, artistic, and magical digital painting based on the following description: ${input.prompt}. Style: ethereal, dreamy, with soft lighting.`,
+          prompt: promptParts,
           config: {
             responseModalities: ['TEXT', 'IMAGE'], 
           },
@@ -37,6 +43,9 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
         const errorMessage = (e as Error).message;
         if (errorMessage.includes('billing')) {
              return { imageUrl: '', status: 'failed', error: 'Image model istemaal karne ke liye aapke Google Cloud account par billing chalu hona zaroori hai. Kripya apne account settings check karein.' };
+        }
+        if (errorMessage.includes('API key not valid')) {
+            return { imageUrl: '', status: 'failed', error: 'Di gayi API Key galat hai. Kripya sahi key daalein.' };
         }
         return { imageUrl: '', status: 'failed', error: errorMessage };
     }

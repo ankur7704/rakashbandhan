@@ -15,10 +15,10 @@ type ImageGeneratorProps = {
 type ImageStatus = 'idle' | 'generating' | 'completed' | 'failed';
 
 const prompts = [
-    "A dreamy, watercolor-style re-imagining of this memory.",
-    "Turn this moment into a magical, glowing fantasy scene.",
-    "Recreate this photo in a beautiful, artistic painting style.",
-    "A futuristic, cyberpunk version of this memory.",
+    "Recreate this photo as a funny cartoon.",
+    "Turn this moment into a dreamy, watercolor-style painting.",
+    "Imagine this scene in a beautiful, glowing fantasy world.",
+    "Redraw this in a vintage, old-timey comic book style.",
     "An abstract artwork inspired by the emotions of this photo."
 ];
 
@@ -36,7 +36,8 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
     try {
       const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
       const result = await generateImageAction({ 
-          prompt: `${randomPrompt} The original memory is: ${memory.imageDescription}`
+          prompt: `${randomPrompt}. The original memory is about: ${memory.imageDescription}`,
+          imageDataUri: memory.imageUrl
       });
 
       if (result.status === 'completed' && result.imageUrl) {
@@ -59,7 +60,10 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
           case 'idle':
               return (
                   <div className="flex flex-col items-center justify-center text-center p-8">
-                      <Sparkles className="w-16 h-16 text-primary mb-4"/>
+                      <div className="relative w-40 h-40 rounded-lg overflow-hidden mb-4 shadow-md">
+                          <Image src={memory.imageUrl} alt="Original memory" layout="fill" objectFit="cover" />
+                      </div>
+                      <Sparkles className="w-12 h-12 text-primary mb-2"/>
                       <h2 className="text-xl font-headline mb-2">Ek Jaadui Pal Banayein</h2>
                       <p className="text-muted-foreground mb-6">Is photo se prerna lekar AI ko ek bilkul nayi, kalpana se bhari image banane dein.</p>
                       <Button onClick={handleGenerateClick}>
