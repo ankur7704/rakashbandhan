@@ -18,7 +18,7 @@ import { DialogTitle } from '@/components/ui/dialog';
 
 const formSchema = z.object({
   imageFile: z.any().optional(),
-  imageDescription: z.string().min(10, 'Please provide a more detailed description.').max(200),
+  imageDescription: z.string().min(10, 'Kripya thoda aur vistaar se likhein.').max(200),
   wish: z.string().optional(),
 });
 
@@ -63,7 +63,7 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
   const handleGenerateWish = async () => {
     const description = form.getValues('imageDescription');
     if (!description) {
-      form.setError('imageDescription', { message: 'A description is needed to generate a wish.' });
+      form.setError('imageDescription', { message: 'Sandesh banane ke liye vivaran zaroori hai.' });
       return;
     }
     setIsGenerating(true);
@@ -71,12 +71,12 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
       const result = await generateWishAction({ imageDescription: description });
       if (result?.wish) {
         form.setValue('wish', result.wish);
-        toast({ title: 'Wish Generated!', description: 'The AI has crafted a special message for you.' });
+        toast({ title: 'Sandesh Taiyaar!', description: 'AI ne aapke liye ek khaas sandesh banaya hai.' });
       } else {
-        throw new Error('AI did not return a wish.');
+        throw new Error('AI ne koi sandesh nahi diya.');
       }
     } catch (error) {
-      toast({ variant: "destructive", title: 'AI Error', description: 'Could not generate wish. Please try again.' });
+      toast({ variant: "destructive", title: 'AI Se Garbad', description: 'Sandesh nahi ban paaya. Phir se koshish karein.' });
     }
     setIsGenerating(false);
   };
@@ -113,7 +113,7 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
         />
         <Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => fileInputRef.current?.click()}>
           <ImagePlus className="mr-2 h-4 w-4" />
-          {imagePreview ? 'Change Image' : 'Upload Image'}
+          {imagePreview ? 'Photo Badlein' : 'Photo Daalein'}
         </Button>
          {form.formState.errors.imageFile && <p className="text-destructive text-xs mt-1">{(form.formState.errors.imageFile.message as string)}</p>}
       </div>
@@ -124,15 +124,15 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
         </button>
 
         <DialogTitle className="font-headline text-2xl md:text-3xl font-semibold mb-4 text-primary-foreground/80">
-          {memoryToEdit ? 'Edit this Memory' : 'Create a New Memory'}
+          {memoryToEdit ? 'Is Yaad Ko Badlein' : 'Ek Nayi Yaad Banayein'}
         </DialogTitle>
         
         <div className="space-y-4 flex-grow">
           <div>
-            <Label htmlFor="imageDescription">Describe the moment</Label>
+            <Label htmlFor="imageDescription">Us pal ko bayaan karein</Label>
             <Textarea
               id="imageDescription"
-              placeholder="e.g., My sister tying a rakhi on my wrist during the 2023 celebration..."
+              placeholder="Jaise, 2023 mein jab behen ne kalai par rakhi baandhi..."
               {...form.register('imageDescription')}
               className="mt-1"
             />
@@ -140,18 +140,18 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
           </div>
 
           <div>
-            <Label htmlFor="wish">Heartfelt Wish or Quote</Label>
+            <Label htmlFor="wish">Dil Se Sandesh Ya Quote</Label>
             <div className="flex items-start gap-2">
               <Textarea
                 id="wish"
-                placeholder="A special wish will appear here..."
+                placeholder="Yahan ek khaas sandesh dikhega..."
                 {...form.register('wish')}
                 className="mt-1"
                 rows={4}
               />
               <Button type="button" variant="outline" size="icon" className="mt-1 shrink-0" onClick={handleGenerateWish} disabled={isGenerating}>
                 {isGenerating ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div> : <Wand2 className="h-4 w-4" />}
-                <span className="sr-only">Generate Wish</span>
+                <span className="sr-only">Sandesh Banayein</span>
               </Button>
             </div>
             {form.formState.errors.wish && <p className="text-destructive text-sm mt-1">{form.formState.errors.wish.message}</p>}
@@ -163,13 +163,13 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
             {onDelete && (
               <Button type="button" variant="destructive" onClick={onDelete}>
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                Mitaayein
               </Button>
             )}
           </div>
           <Button type="submit">
             <Save className="mr-2 h-4 w-4" />
-            Save Memory
+            Yaad Save Karein
           </Button>
         </div>
       </div>

@@ -20,7 +20,7 @@ export type GenerateRakshaBandhanWishInput = z.infer<
 >;
 
 const GenerateRakshaBandhanWishOutputSchema = z.object({
-  wish: z.string().describe('A heartfelt Raksha Bandhan wish or quote.'),
+  wish: z.string().describe('A heartfelt Raksha Bandhan wish or quote in Hinglish.'),
 });
 export type GenerateRakshaBandhanWishOutput = z.infer<
   typeof GenerateRakshaBandhanWishOutputSchema
@@ -36,11 +36,11 @@ const prompt = ai.definePrompt({
   name: 'generateRakshaBandhanWishPrompt',
   input: {schema: GenerateRakshaBandhanWishInputSchema},
   output: {schema: GenerateRakshaBandhanWishOutputSchema},
-  prompt: `You are an AI assistant specialized in generating heartfelt Raksha Bandhan wishes and quotes.
+  prompt: `Aap ek AI assistant hain jo Raksha Bandhan ke liye dil se nikle sandesh aur quotes likhte hain.
+  Aapko Hinglish (Hindi written in English letters) mein jawab dena hai.
+  Di gayi image ke vivaran ke aadhar par, ek mazedaar, bhavnaatmak ya dil ko chu lene wala Raksha Bandhan ka sandesh ya quote banayein.
 
-  Based on the image description provided, create a meaningful and emotional Raksha Bandhan wish or quote.
-
-  Image Description: {{{imageDescription}}}
+  Image ka Vivaran: {{{imageDescription}}}
   `,
 });
 

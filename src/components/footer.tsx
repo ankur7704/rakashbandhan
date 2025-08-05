@@ -4,10 +4,10 @@ const Footer = () => {
   return (
     <footer className="text-center py-8 mt-12">
       <p className="text-lg text-muted-foreground font-headline">
-        This bond is forever 💖
+        Yeh bandhan toh pyaar ka bandhan hai 💖
       </p>
       <p className="text-sm text-muted-foreground mt-2">
-        Created with love by Abhishek Kumar
+        Bade pyaar se banaya hai - Abhishek Kumar ne
       </p>
     </footer>
   );

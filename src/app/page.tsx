@@ -30,19 +30,19 @@ const inspirationCards = [
   },
   {
     icon: SweetsIcon,
-    title: "Sweet Bribe",
+    title: "Mithai ki Rishwat",
     text: "Is Rakhi, bas ek promise: meri chocolate pe nazar mat dalna. Deal? Happy Raksha Bandhan!",
     color: "bg-accent/20 border-accent"
   },
   {
     icon: RakhiIcon,
-    title: "Emotional Atyachar",
-    text: "Miles may separate us, but our bond is a wifi connection that never lags. Miss you, bro!",
+    title: "Bhavnao ka Atyachar",
+    text: "Duriyaan bhale hi ho, par apna connection bina lag wala wifi hai. Yaad aati hai, bhai!",
     color: "bg-primary/20 border-primary"
   },
     {
     icon: Gift,
-    title: "Gift ki Chinta",
+    title: "Uphaar ki Chinta",
     text: "Gift? Vo sab chodo, bas ye yaad rakhna ki remote aaj mera hai. Happy Rakhi!",
     color: "bg-blue-100 border-blue-300"
   },
@@ -54,8 +54,8 @@ const inspirationCards = [
   },
    {
     icon: Sparkles,
-    title: "Secret Keeper",
-    text: "Mere saare secrets ka vault hai tu. Is Rakhi, let's make more memories to hide!",
+    title: "Raazdaar",
+    text: "Mere saare secrets ka vault hai tu. Is Rakhi, chalo aur yaadein banayein chhupane ke liye!",
     color: "bg-purple-100 border-purple-300"
   }
 ];
@@ -65,7 +65,7 @@ export default function CreateAlbumPage() {
     {
       id: 1,
       imageUrl: 'https://placehold.co/600x400.png',
-      imageDescription: 'A brother and sister laughing together.',
+      imageDescription: 'Ek bhai aur behen haste hue.',
       wish: '',
       dataAiHint: 'siblings laughing'
     },
@@ -90,8 +90,8 @@ export default function CreateAlbumPage() {
     if (memories.length <= 1) {
       toast({
         variant: 'destructive',
-        title: 'Cannot remove',
-        description: 'You must have at least one memory.',
+        title: 'Hata nahi sakte',
+        description: 'Kam se kam ek yaad honi chahiye.',
       });
       return;
     }
@@ -139,8 +139,8 @@ export default function CreateAlbumPage() {
     if (memories.some(mem => !mem.imageDescription)) {
         toast({
             variant: "destructive",
-            title: "Incomplete Memories",
-            description: "Please provide a description for each memory."
+            title: "Adhuri Yaadein",
+            description: "Kripya har yaad ke liye vivaran dein."
         });
         return;
     }
@@ -171,7 +171,7 @@ export default function CreateAlbumPage() {
           <Card className="w-full max-w-4xl bg-card/80 backdrop-blur-sm shadow-2xl">
             <CardHeader>
               <CardTitle className="font-headline text-3xl text-center text-primary-foreground/90">
-                Create Your Digital Rakhi Album
+                Apna Digital Rakhi Album Banaayein
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
@@ -198,7 +198,7 @@ export default function CreateAlbumPage() {
                     />
                     <Button asChild variant="outline" size="sm" className="mt-2">
                        <label htmlFor={`file-${memory.id}`} className="cursor-pointer">
-                          <ImagePlus className="mr-2 h-4 w-4" /> Change Image
+                          <ImagePlus className="mr-2 h-4 w-4" /> Photo Badlein
                        </label>
                     </Button>
                   </div>
@@ -206,11 +206,11 @@ export default function CreateAlbumPage() {
                   <div className="md:col-span-2 space-y-4">
                      <div>
                       <Label htmlFor={`description-${memory.id}`}>
-                        Describe the moment
+                        Us pal ko bayaan karein
                       </Label>
                       <Textarea
                         id={`description-${memory.id}`}
-                        placeholder="e.g., Our first Rakhi celebration in the new house."
+                        placeholder="Jaise, naye ghar mein hamara pehla Rakhi ka tyohaar."
                         value={memory.imageDescription}
                         onChange={(e) =>
                           handleInputChange(
@@ -224,11 +224,11 @@ export default function CreateAlbumPage() {
                     </div>
                     <div>
                       <Label htmlFor={`wish-${memory.id}`}>
-                        Add a personal wish (optional)
+                        Ek khaas sandesh likhein (vaikalpik)
                       </Label>
                       <Input
                         id={`wish-${memory.id}`}
-                        placeholder="e.g., Happy Raksha Bandhan, dear sister!"
+                        placeholder="Jaise, Pyaari behen, Rakhi ki dher saari shubhkaamnayein!"
                         value={memory.wish}
                         onChange={(e) =>
                           handleInputChange(memory.id, 'wish', e.target.value)
@@ -251,10 +251,10 @@ export default function CreateAlbumPage() {
               ))}
               <div className="flex justify-between items-center">
                 <Button variant="outline" onClick={handleAddMemoryField}>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add Another Memory
+                  <PlusCircle className="mr-2 h-4 w-4" /> Ek Aur Yaad Jodein
                 </Button>
                 <Button onClick={handleSubmit} size="lg">
-                  Create Album <ArrowRight className="ml-2 h-4 w-4" />
+                  Album Banaayein <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
@@ -262,7 +262,7 @@ export default function CreateAlbumPage() {
 
           <section className="w-full max-w-5xl mx-auto mt-20 py-12">
             <h2 className="text-3xl font-headline text-center mb-2 text-primary-foreground/90 text-shadow-custom">Kuch Khatti Meethi Yaadein</h2>
-            <p className="text-center text-muted-foreground mb-8">Need some inspiration? Here are some fun ideas for your wishes!</p>
+            <p className="text-center text-muted-foreground mb-8">Thodi prerna chahiye? Aapke sandeshon ke liye kuch mazedaar vichaar!</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {inspirationCards.map((card, index) => (
                 <div key={index} className="inspiration-card">

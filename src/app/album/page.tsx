@@ -70,7 +70,7 @@ export default function AlbumPage() {
             : mem
         )
       );
-      toast({ title: "Memory Updated!", description: "Your beautiful memory has been saved." });
+      toast({ title: "Yaad Update Ho Gayi!", description: "Aapki khoobsurat yaad save ho gayi hai." });
     } else {
       // Add new memory
       if (!imageUrl) {
@@ -87,7 +87,7 @@ export default function AlbumPage() {
             throw new Error('Could not generate a wish.');
           }
         } catch (error) {
-          toast({ variant: "destructive", title: "AI Error", description: "Failed to generate a wish. Please try again." });
+          toast({ variant: "destructive", title: "AI Se Garbad", description: "Sandesh nahi ban paaya. Phir se koshish karein." });
           return;
         }
       }
@@ -102,7 +102,7 @@ export default function AlbumPage() {
         dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
       };
       setMemories([...memories, newMemory]);
-      toast({ title: "Memory Added!", description: "A new cherished moment is now in your album." });
+      toast({ title: "Nayi Yaad Jud Gayi!", description: "Ek aur anmol pal aapke album mein jud gaya hai." });
     }
     setIsModalOpen(false);
     setEditingMemory(null);
@@ -111,7 +111,7 @@ export default function AlbumPage() {
   const handleDeleteMemory = (id: string) => {
     const newMemories = memories.filter((mem) => mem.id !== id);
     setMemories(newMemories);
-    toast({ variant: "destructive", title: "Memory Removed", description: "The memory has been removed from your album." });
+    toast({ variant: "destructive", title: "Yaad Mita Di Gayi", description: "Yeh yaad aapke album se hata di gayi hai." });
     setIsModalOpen(false);
     setEditingMemory(null);
   };
@@ -160,10 +160,10 @@ export default function AlbumPage() {
           </div>
           <div className="flex flex-col items-center gap-4 mt-8">
              <p className="text-muted-foreground text-center max-w-md">
-                This is your digital Raksha Bandhan album. Hover over a card to pause the animation and click to edit the memory or get a new AI-generated wish.
+                Yeh aapka digital Rakhi album hai. Animation rokne ke liye card par cursor le jaayein aur yaadon ko badalne ya naya AI sandesh paane ke liye click karein.
              </p>
              <Button variant="outline" onClick={() => router.push('/')}>
-                Back to Editor
+                Editor Par Vaapas Jayein
              </Button>
           </div>
         </main>
@@ -173,7 +173,7 @@ export default function AlbumPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-3xl p-0">
          <DialogTitle className="sr-only">
-            {editingMemory ? 'Edit this Memory' : 'Create a New Memory'}
+            {editingMemory ? 'Is Yaad Ko Badlein' : 'Ek Nayi Yaad Banayein'}
           </DialogTitle>
           <MemoryForm
             memoryToEdit={editingMemory}
