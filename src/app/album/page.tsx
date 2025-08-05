@@ -157,7 +157,8 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.min(total * 45, 300);
+    // Increased the radius calculation to make the carousel wider
+    const radius = Math.min(window.innerWidth / 2.5, 450); 
     const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
     return {
