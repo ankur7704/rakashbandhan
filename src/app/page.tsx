@@ -367,7 +367,7 @@ export default function CreateAlbumPage() {
           </section>
 
         </main>
-        <Footer />
+        <Footer creatorName={creatorName} />
       </div>
     </>
   );
