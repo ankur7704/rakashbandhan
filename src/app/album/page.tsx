@@ -189,9 +189,6 @@ export default function AlbumPage() {
             </div>
           </div>
           <div className="flex flex-col items-center gap-4 mt-8">
-             <p className="text-muted-foreground text-center max-w-md">
-                Yeh aapka digital Rakhi album hai. Animation rokne ke liye card par cursor le jaayein aur yaadon ko badalne ya naya AI sandesh paane ke liye click karein.
-             </p>
              <div className="flex items-center gap-4">
                <Button variant="outline" onClick={() => router.push('/')}>
                   Editor Par Vaapas Jayein
