@@ -23,6 +23,9 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '4.5mb', // Increase for video uploads
     },
   },
+  env: {
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+  }
 };
 
 export default nextConfig;
