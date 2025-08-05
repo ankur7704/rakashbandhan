@@ -212,11 +212,11 @@ export default function CreateAlbumPage() {
                       </div>
                       <div>
                           <Label htmlFor="sibling-name" className="text-base font-medium flex items-center gap-2">
-                             <Users className="h-5 w-5 text-primary"/> Aapke Bhai/Behen ka Naam
+                             <Users className="h-5 w-5 text-primary"/> Aapke Bhai/Behen ke Naam
                           </Label>
                           <Input 
                               id="sibling-name" 
-                              placeholder="Unka poora naam"
+                              placeholder="Priya, Riya... ya Rahul, Rohit..."
                               value={siblingName}
                               onChange={(e) => setSiblingName(e.target.value)}
                               className="mt-2"

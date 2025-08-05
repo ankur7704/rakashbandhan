@@ -12,12 +12,23 @@ const Header = ({ siblingName, creatorGender }: HeaderProps) => {
     if (!siblingName || !creatorGender) {
       return "Raksha Bandhan ki Yaadein";
     }
+
+    const hasMultipleSiblings = siblingName.includes(',');
+
     if (creatorGender === 'male') {
+      if (hasMultipleSiblings) {
+        return `Raksha Bandhan ki Badhai ho, Pyaari Behno!`;
+      }
       return `Raksha Bandhan ki Badhai ho, Pyaari Behen ${siblingName}!`;
     }
+    
     if (creatorGender === 'female') {
+      if (hasMultipleSiblings) {
+        return `Raksha Bandhan ki Badhai ho, Pyaare Bhaiyon!`;
+      }
       return `Raksha Bandhan ki Badhai ho, Pyaare Bhai ${siblingName}!`;
     }
+    
     return "Raksha Bandhan ki Yaadein";
   };
 
@@ -38,5 +49,3 @@ const Header = ({ siblingName, creatorGender }: HeaderProps) => {
 };
 
 export default Header;
-
-    
