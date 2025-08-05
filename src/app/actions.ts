@@ -1,8 +1,8 @@
 'use server';
 
 import { generateRakshaBandhanWish, GenerateRakshaBandhanWishInput } from '@/ai/flows/generate-raksha-bandhan-wish';
-import { generateVideo, checkVideoStatus } from '@/ai/flows/generate-video-flow';
-import type { GenerateVideoInput } from '@/types';
+import { generateImage } from '@/ai/flows/generate-image-flow';
+import type { GenerateImageInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 
 export async function generateWishAction(input: GenerateRakshaBandhanWishInput) {
@@ -15,25 +15,13 @@ export async function generateWishAction(input: GenerateRakshaBandhanWishInput) 
   }
 }
 
-export async function generateVideoAction(input: GenerateVideoInput) {
+export async function generateImageAction(input: GenerateImageInput) {
     try {
-        const result = await generateVideo(input);
+        const result = await generateImage(input);
+        revalidatePath('/album');
         return result;
     } catch(error) {
-        console.error("Error in generateVideoAction:", error);
-        return { status: 'failed', error: 'Video generation failed to start.' };
-    }
-}
-
-export async function checkVideoStatusAction(videoId: string) {
-    try {
-        const result = await checkVideoStatus(videoId);
-        if (result.status === 'completed' || result.status === 'failed') {
-            revalidatePath('/album'); // To update the UI eventually if needed
-        }
-        return result;
-    } catch(error) {
-        console.error("Error in checkVideoStatusAction:", error);
-        return { status: 'failed', error: 'Failed to check video status.' };
+        console.error("Error in generateImageAction:", error);
+        return { status: 'failed', error: 'Image generation failed to start.' };
     }
 }

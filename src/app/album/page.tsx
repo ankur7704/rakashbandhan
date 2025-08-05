@@ -8,14 +8,14 @@ import Footer from '@/components/footer';
 import BackgroundAnimations from '@/components/background-animations';
 import MemoryCard from '@/components/memory-card';
 import MemoryForm from '@/components/memory-form';
-import VideoGenerator from '@/components/video-generator';
+import ImageGenerator from '@/components/image-generator';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui/button';
-import { Volume2, VolumeX, Clapperboard } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles } from 'lucide-react';
 
 
 const thoughtCards = [
@@ -48,8 +48,8 @@ const thoughtCards = [
 export default function AlbumPage() {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isvideoGeneratorOpen, setIsVideoGeneratorOpen] = useState(false);
-  const [selectedMemoryForVideo, setSelectedMemoryForVideo] = useState<Memory | null>(null);
+  const [isImageGeneratorOpen, setIsImageGeneratorOpen] = useState(false);
+  const [selectedMemoryForImage, setSelectedMemoryForImage] = useState<Memory | null>(null);
   const [editingMemory, setEditingMemory] = useState<Memory | null>(null);
   const { toast } = useToast();
   const router = useRouter();
@@ -110,9 +110,9 @@ export default function AlbumPage() {
     setIsModalOpen(true);
   };
 
-  const handleOpenVideoGenerator = (memory: Memory) => {
-    setSelectedMemoryForVideo(memory);
-    setIsVideoGeneratorOpen(true);
+  const handleOpenImageGenerator = (memory: Memory) => {
+    setSelectedMemoryForImage(memory);
+    setIsImageGeneratorOpen(true);
   };
   
   const handleSaveMemory = async (formData: {
@@ -239,9 +239,9 @@ export default function AlbumPage() {
                                             data-ai-hint={memory.dataAiHint}
                                           />
                                           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                              <Button variant="secondary" onClick={() => handleOpenVideoGenerator(memory)}>
-                                                  <Clapperboard className="mr-2"/>
-                                                  Video Banaayein
+                                              <Button variant="secondary" onClick={() => handleOpenImageGenerator(memory)}>
+                                                  <Sparkles className="mr-2"/>
+                                                  Magic Moment Banayein
                                               </Button>
                                           </div>
                                       </div>
@@ -281,10 +281,10 @@ export default function AlbumPage() {
         </DialogContent>
       </Dialog>
       
-      <Dialog open={isvideoGeneratorOpen} onOpenChange={setIsVideoGeneratorOpen}>
+      <Dialog open={isImageGeneratorOpen} onOpenChange={setIsImageGeneratorOpen}>
           <DialogContent className="max-w-md p-0">
-              <DialogTitle className="sr-only">Video Generator</DialogTitle>
-              {selectedMemoryForVideo && <VideoGenerator memory={selectedMemoryForVideo} onClose={() => setIsVideoGeneratorOpen(false)} />}
+              <DialogTitle className="sr-only">Image Generator</DialogTitle>
+              {selectedMemoryForImage && <ImageGenerator memory={selectedMemoryForImage} onClose={() => setIsImageGeneratorOpen(false)} />}
           </DialogContent>
       </Dialog>
     </>

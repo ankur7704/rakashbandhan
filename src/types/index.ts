@@ -11,20 +11,14 @@ export type Memory = {
   dataAiHint?: string;
 };
 
-export const GenerateVideoInputSchema = z.object({
-  photoDataUri: z
-    .string()
-    .describe(
-      "A photo of a memory, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
-    ),
-    prompt: z.string().describe('A prompt to guide the video generation.'),
+export const GenerateImageInputSchema = z.object({
+  prompt: z.string().describe('A prompt to guide the image generation.'),
 });
-export type GenerateVideoInput = z.infer<typeof GenerateVideoInputSchema>;
+export type GenerateImageInput = z.infer<typeof GenerateImageInputSchema>;
 
-export const GenerateVideoOutputSchema = z.object({
-  videoId: z.string(),
-  status: z.enum(['processing', 'completed', 'failed']),
-  videoUrl: z.string().optional(),
+export const GenerateImageOutputSchema = z.object({
+  imageUrl: z.string().url(),
+  status: z.enum(['completed', 'failed']),
   error: z.string().optional(),
 });
-export type GenerateVideoOutput = z.infer<typeof GenerateVideoOutputSchema>;
+export type GenerateImageOutput = z.infer<typeof GenerateImageOutputSchema>;
