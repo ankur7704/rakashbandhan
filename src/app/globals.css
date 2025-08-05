@@ -93,7 +93,7 @@
     perspective: 1500px;
     width: 100%;
     max-width: 1000px;
-    height: 500px;
+    height: 450px; /* Reduced height for a more cinematic feel */
     position: relative;
     margin: 0 auto;
   }
@@ -103,7 +103,7 @@
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    animation: rotate-carousel 30s linear infinite;
+    animation: rotate-carousel 45s linear infinite; /* Slower, more cinematic rotation */
   }
   
   .carousel-container:hover .carousel {
@@ -123,11 +123,12 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 300px;
-    height: 400px;
+    width: 280px; /* Slightly smaller cards */
+    height: 380px;
     transform-style: preserve-3d;
     transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.5s, z-index 0.5s;
     opacity: 0.9;
+    backface-visibility: hidden; /* Prevent flickering on rotation */
   }
   
   .carousel-card:hover {

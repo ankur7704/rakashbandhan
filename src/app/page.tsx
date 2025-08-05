@@ -1,145 +1,125 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import type { Memory } from '@/types';
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { Memory } from '@/types';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import BackgroundAnimations from '@/components/background-animations';
-import MemoryCard from '@/components/memory-card';
-import MemoryForm from '@/components/memory-form';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { PlusCircle } from 'lucide-react';
-import { generateWishAction } from './actions';
-import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PlusCircle, Trash2, ImagePlus, ArrowRight } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-const initialMemoriesData: Omit<Memory, 'rotation' | 'scale'>[] = [
-  {
-    id: '1',
-    imageUrl: 'https://placehold.co/600x400.png',
-    imageDescription: 'A brother and sister laughing together on a swing.',
-    wish: 'Side by side or miles apart, we are siblings connected by the heart. Happy Raksha Bandhan!',
-    dataAiHint: 'siblings laughing'
-  },
-  {
-    id: '2',
-    imageUrl: 'https://placehold.co/600x400.png',
-    imageDescription: 'A sister tying a rakhi on her brother\'s wrist.',
-    wish: 'The thread of Rakhi is a thread of love that binds our lives and hearts. Wishing you a joyful Raksha Bandhan.',
-    dataAiHint: 'rakhi tying'
-  },
-  {
-    id: '3',
-    imageUrl: 'https://placehold.co/600x400.png',
-    imageDescription: 'An old black and white photo of two young siblings.',
-    wish: 'From childhood squabbles to a lifetime of support, our bond is the most precious gift. Happy Rakhi!',
-    dataAiHint: 'childhood photo'
-  },
-];
+type MemoryInput = Omit<Memory, 'id' | 'rotation' | 'scale'> & {
+  id: number;
+  imageFile?: File;
+};
 
-export default function Home() {
-  const [memories, setMemories] = useState<Memory[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingMemory, setEditingMemory] = useState<Memory | null>(null);
+export default function CreateAlbumPage() {
+  const [memories, setMemories] = useState<MemoryInput[]>([
+    {
+      id: 1,
+      imageUrl: 'https://placehold.co/600x400.png',
+      imageDescription: 'A brother and sister laughing together.',
+      wish: '',
+      dataAiHint: 'siblings laughing'
+    },
+  ]);
+  const router = useRouter();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const memoriesWithStyles = initialMemoriesData.map((mem) => ({
-      ...mem,
+  const handleAddMemoryField = () => {
+    setMemories([
+      ...memories,
+      {
+        id: Date.now(),
+        imageUrl: 'https://placehold.co/600x400.png',
+        imageDescription: '',
+        wish: '',
+        dataAiHint: ''
+      },
+    ]);
+  };
+
+  const handleRemoveMemoryField = (id: number) => {
+    if (memories.length <= 1) {
+      toast({
+        variant: 'destructive',
+        title: 'Cannot remove',
+        description: 'You must have at least one memory.',
+      });
+      return;
+    }
+    setMemories(memories.filter((mem) => mem.id !== id));
+  };
+
+  const handleInputChange = (
+    id: number,
+    field: 'imageDescription' | 'wish',
+    value: string
+  ) => {
+    setMemories(
+      memories.map((mem) =>
+        mem.id === id ? { ...mem, [field]: value } : mem
+      )
+    );
+  };
+
+  const handleImageChange = (
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMemories(
+          memories.map((mem) =>
+            mem.id === id
+              ? {
+                  ...mem,
+                  imageFile: file,
+                  imageUrl: reader.result as string,
+                }
+              : mem
+          )
+        );
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = () => {
+    // Basic validation
+    if (memories.some(mem => !mem.imageDescription)) {
+        toast({
+            variant: "destructive",
+            title: "Incomplete Memories",
+            description: "Please provide a description for each memory."
+        });
+        return;
+    }
+
+    const memoriesForAlbum = memories.map((mem, index) => ({
+      id: `${index + 1}`,
+      imageUrl: mem.imageUrl,
+      imageDescription: mem.imageDescription,
+      wish: mem.wish, // Wish can be generated on the album page
       rotation: 0,
       scale: 1,
+      dataAiHint: mem.imageDescription.split(' ').slice(0, 2).join(' '),
     }));
-    setMemories(memoriesWithStyles);
-  }, []);
 
-  const handleOpenModal = (memory: Memory | null) => {
-    setEditingMemory(memory);
-    setIsModalOpen(true);
-  };
-  
-  const handleAddNew = () => {
-    setEditingMemory(null);
-    setIsModalOpen(true);
-  }
+    // Using localStorage to pass memories to the album page
+    // This is a simple solution for client-side data passing without a backend
+    localStorage.setItem('raksha-bandhan-memories', JSON.stringify(memoriesForAlbum));
 
-  const handleSaveMemory = async (formData: {
-    imageFile?: File;
-    imageDescription: string;
-    wish: string;
-    imagePreview?: string;
-  }) => {
-    let imageUrl = formData.imagePreview;
-  
-    if (editingMemory) {
-      // Edit existing memory
-      setMemories(
-        memories.map((mem) =>
-          mem.id === editingMemory.id
-            ? {
-                ...mem,
-                imageDescription: formData.imageDescription,
-                wish: formData.wish,
-                imageUrl: imageUrl || mem.imageUrl,
-                dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
-              }
-            : mem
-        )
-      );
-      toast({ title: "Memory Updated!", description: "Your beautiful memory has been saved." });
-    } else {
-      // Add new memory
-      if (!imageUrl) {
-        imageUrl = 'https://placehold.co/600x400.png';
-      }
-      
-      let finalWish = formData.wish;
-      if (!finalWish && formData.imageDescription) {
-        try {
-          const result = await generateWishAction({ imageDescription: formData.imageDescription });
-          if (result?.wish) {
-            finalWish = result.wish;
-          } else {
-            throw new Error('Could not generate a wish.');
-          }
-        } catch (error) {
-          toast({ variant: "destructive", title: "AI Error", description: "Failed to generate a wish. Please try again." });
-          return;
-        }
-      }
-
-      const newMemory: Memory = {
-        id: new Date().toISOString(),
-        imageUrl,
-        imageDescription: formData.imageDescription,
-        wish: finalWish,
-        rotation: 0,
-        scale: 1,
-        dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
-      };
-      setMemories([...memories, newMemory]);
-      toast({ title: "Memory Added!", description: "A new cherished moment is now in your album." });
-    }
-    setIsModalOpen(false);
-    setEditingMemory(null);
-  };
-
-  const handleDeleteMemory = (id: string) => {
-    const newMemories = memories.filter((mem) => mem.id !== id);
-    setMemories(newMemories);
-    toast({ variant: "destructive", title: "Memory Removed", description: "The memory has been removed from your album." });
-    setIsModalOpen(false);
-    setEditingMemory(null);
-  };
-
-  const getCardStyle = (index: number, total: number) => {
-    const angle = (360 / total) * index;
-    const radius = total * 50; // Adjust radius based on number of cards
-    const transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(-50%)`;
-    const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) translateY(-50%) scale(1.1)`;
-    return {
-      transform,
-      '--transform-hover': transformHover,
-    };
+    router.push('/album');
   };
 
   return (
@@ -148,60 +128,100 @@ export default function Home() {
       <div className="relative z-10 flex min-h-screen flex-col px-4 pt-8 sm:px-6 lg:px-8">
         <Header />
         <main className="flex-grow flex flex-col items-center justify-center">
-          <div className="carousel-container my-12">
-            <div className="carousel">
+          <Card className="w-full max-w-4xl bg-card/80 backdrop-blur-sm shadow-2xl">
+            <CardHeader>
+              <CardTitle className="font-headline text-3xl text-center text-primary-foreground/90">
+                Create Your Digital Rakhi Album
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 p-6">
               {memories.map((memory, index) => (
                 <div
                   key={memory.id}
-                  className="carousel-card"
-                  style={getCardStyle(index, memories.length + 1) as React.CSSProperties}
-                  onClick={() => handleOpenModal(memory)}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start border-b border-border/50 pb-6"
                 >
-                  <MemoryCard
-                    memory={memory}
-                    isActive={true} // All cards are interactive in this view
-                  />
+                  <div className="flex flex-col items-center">
+                    <div className="relative w-40 h-40 aspect-square rounded-lg overflow-hidden shadow-md">
+                       <Image
+                        src={memory.imageUrl}
+                        alt={`Preview ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                     <input
+                      type="file"
+                      id={`file-${memory.id}`}
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(memory.id, e)}
+                      className="hidden"
+                    />
+                    <Button asChild variant="outline" size="sm" className="mt-2">
+                       <label htmlFor={`file-${memory.id}`} className="cursor-pointer">
+                          <ImagePlus className="mr-2 h-4 w-4" /> Change Image
+                       </label>
+                    </Button>
+                  </div>
+
+                  <div className="md:col-span-2 space-y-4">
+                     <div>
+                      <Label htmlFor={`description-${memory.id}`}>
+                        Describe the moment
+                      </Label>
+                      <Textarea
+                        id={`description-${memory.id}`}
+                        placeholder="e.g., Our first Rakhi celebration in the new house."
+                        value={memory.imageDescription}
+                        onChange={(e) =>
+                          handleInputChange(
+                            memory.id,
+                            'imageDescription',
+                            e.target.value
+                          )
+                        }
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`wish-${memory.id}`}>
+                        Add a personal wish (optional)
+                      </Label>
+                      <Input
+                        id={`wish-${memory.id}`}
+                        placeholder="e.g., Happy Raksha Bandhan, dear sister!"
+                        value={memory.wish}
+                        onChange={(e) =>
+                          handleInputChange(memory.id, 'wish', e.target.value)
+                        }
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                   {memories.length > 1 && (
+                     <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-4 self-center text-muted-foreground hover:text-destructive"
+                      onClick={() => handleRemoveMemoryField(memory.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               ))}
-              <div
-                className="carousel-card"
-                style={getCardStyle(memories.length, memories.length + 1) as React.CSSProperties}
-              >
-                <div
-                  className="flex h-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 bg-primary/10 p-8 text-center text-primary/80 transition-all duration-300 hover:border-primary hover:bg-primary/20 hover:text-primary hover:shadow-xl"
-                  onClick={handleAddNew}
-                  role="button"
-                  aria-label="Add new memory"
-                >
-                  <PlusCircle className="mb-4 h-12 w-12" />
-                  <h3 className="font-headline text-xl font-semibold">
-                    Add a New Memory
-                  </h3>
-                  <p className="mt-1 text-sm">Click here to upload a new moment.</p>
-                </div>
+              <div className="flex justify-between items-center">
+                <Button variant="outline" onClick={handleAddMemoryField}>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Another Memory
+                </Button>
+                <Button onClick={handleSubmit} size="lg">
+                  Create Album <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-8 mt-8">
-             <p className="text-muted-foreground text-center">Hover over a card to pause and click to edit.</p>
-          </div>
+            </CardContent>
+          </Card>
         </main>
         <Footer />
       </div>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-3xl p-0">
-         <DialogTitle className="sr-only">
-            {editingMemory ? 'Edit this Memory' : 'Create a New Memory'}
-          </DialogTitle>
-          <MemoryForm
-            memoryToEdit={editingMemory}
-            onSave={handleSaveMemory}
-            onDelete={editingMemory ? () => handleDeleteMemory(editingMemory.id) : undefined}
-            onClose={() => setIsModalOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
