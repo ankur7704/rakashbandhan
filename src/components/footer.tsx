@@ -9,7 +9,7 @@ type FooterProps = {
 
 const Footer = ({ creatorName = "Abhishek Kumar" }: FooterProps) => {
   return (
-    <footer className="w-full max-w-2xl mx-auto text-center py-8 mt-12 px-4">
+    <footer className="w-full max-w-2xl mx-auto text-center py-8 px-4">
        <div className="footer-greeting-card">
         <Card className="bg-primary/20 border-primary/50 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
           <CardContent className="p-6">
