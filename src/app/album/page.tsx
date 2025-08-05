@@ -43,6 +43,7 @@ export default function AlbumPage() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [carouselRadius, setCarouselRadius] = useState(450);
   
   const memoriesByYear = memories.reduce((acc, memory) => {
     const year = memory.year || "Purani Yaadein";
@@ -109,6 +110,17 @@ export default function AlbumPage() {
         router.push('/');
     }
   }, [router, toast]);
+
+  useEffect(() => {
+    // This code now runs only on the client, after the component has mounted.
+    const updateRadius = () => {
+      const newRadius = Math.min(window.innerWidth / 2.5, 450);
+      setCarouselRadius(newRadius);
+    }
+    updateRadius();
+    window.addEventListener('resize', updateRadius);
+    return () => window.removeEventListener('resize', updateRadius);
+  }, []);
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -193,9 +205,8 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.min(window.innerWidth / 2.5, 450); 
-    const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
-    const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
+    const transform = `rotateY(${angle}deg) translateZ(${carouselRadius}px)`;
+    const transformHover = `rotateY(${angle}deg) translateZ(${carouselRadius}px) scale(1.1)`;
     return {
       transform,
       '--transform-hover': transformHover,
@@ -327,5 +338,3 @@ export default function AlbumPage() {
     </>
   );
 }
-
-    
