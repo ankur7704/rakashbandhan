@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui/button';
 import { Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 
 const thoughtCards = [
@@ -55,6 +56,7 @@ export default function AlbumPage() {
   const router = useRouter();
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
   
   const memoriesByYear = memories.reduce((acc, memory) => {
     const year = memory.year || "Purani Yaadein";
@@ -104,6 +106,36 @@ export default function AlbumPage() {
         router.push('/');
     }
   }, [router, toast]);
+
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            if (mutation.attributeName === 'style') {
+                const target = mutation.target as HTMLElement;
+                const rotationMatch = /rotateY\(([^d]+)deg\)/.exec(target.style.transform);
+                if (rotationMatch) {
+                    const rotation = parseFloat(rotationMatch[1]) % 360;
+                    if (rotation > 90 && rotation < 270) {
+                        target.classList.add('is-back');
+                    } else {
+                        target.classList.remove('is-back');
+                    }
+                }
+            }
+        });
+    });
+
+    const cards = carousel.querySelectorAll('.carousel-card');
+    cards.forEach(card => {
+        observer.observe(card, { attributes: true });
+    });
+
+    return () => observer.disconnect();
+  }, [memories]);
+
 
   const handleOpenModal = (memory: Memory | null) => {
     setEditingMemory(memory);
@@ -197,11 +229,11 @@ export default function AlbumPage() {
         <Header />
         <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="carousel-container my-12 w-full h-[350px]">
-            <div className="carousel">
+            <div className="carousel" ref={carouselRef}>
               {memories.map((memory, index) => (
                 <div
                   key={memory.id}
-                  className="carousel-card"
+                  className={cn("carousel-card")}
                   style={getCardStyle(index, memories.length) as React.CSSProperties}
                   onClick={() => handleOpenModal(memory)}
                 >

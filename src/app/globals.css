@@ -126,7 +126,8 @@
     height: 320px; 
     transform-style: preserve-3d;
     transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.5s, z-index 0.5s;
-    backface-visibility: visible; 
+    backface-visibility: hidden;
+    opacity: 1;
   }
   
   .carousel-card:hover {
@@ -140,27 +141,13 @@
   }
   
   /* Make back cards transparent */
-  .carousel-card[style*="rotateY(90deg)"],
-  .carousel-card[style*="rotateY(100deg)"],
-  .carousel-card[style*="rotateY(110deg)"],
-  .carousel-card[style*="rotateY(120deg)"],
-  .carousel-card[style*="rotateY(130deg)"],
-  .carousel-card[style*="rotateY(140deg)"],
-  .carousel-card[style*="rotateY(150deg)"],
-  .carousel-card[style*="rotateY(160deg)"],
-  .carousel-card[style*="rotateY(170deg)"],
-  .carousel-card[style*="rotateY(180deg)"],
-  .carousel-card[style*="rotateY(190deg)"],
-  .carousel-card[style*="rotateY(200deg)"],
-  .carousel-card[style*="rotateY(210deg)"],
-  .carousel-card[style*="rotateY(220deg)"],
-  .carousel-card[style*="rotateY(230deg)"],
-  .carousel-card[style*="rotateY(240deg)"],
-  .carousel-card[style*="rotateY(250deg)"],
-  .carousel-card[style*="rotateY(260deg)"],
-  .carousel-card[style*="rotateY(270deg)"] {
+  .carousel-card {
+    opacity: 1;
+  }
+  .carousel-card.is-back {
     opacity: 0.4;
   }
+
 
   .inspiration-card {
     animation: fadeInUp 0.5s ease-out forwards;
