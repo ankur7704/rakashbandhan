@@ -13,9 +13,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlusCircle, Trash2, ImagePlus, ArrowRight, Sparkles, Heart, Gift, User } from 'lucide-react';
+import { PlusCircle, Trash2, ImagePlus, ArrowRight, Sparkles, Heart, Gift, User, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SweetsIcon, BrotherSisterIcon, RakhiIcon } from '@/components/icons';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 type MemoryInput = Omit<Memory, 'id' | 'rotation' | 'scale'> & {
   id: number;
@@ -63,6 +64,9 @@ const inspirationCards = [
 
 export default function CreateAlbumPage() {
   const [creatorName, setCreatorName] = useState('');
+  const [siblingName, setSiblingName] = useState('');
+  const [creatorGender, setCreatorGender] = useState('');
+
   const [memories, setMemories] = useState<MemoryInput[]>([
     {
       id: 1,
@@ -139,11 +143,11 @@ export default function CreateAlbumPage() {
   };
 
   const handleSubmit = () => {
-    if (!creatorName) {
+    if (!creatorName || !siblingName || !creatorGender) {
         toast({
             variant: "destructive",
-            title: "Naam Toh Batayein!",
-            description: "Kripya album banane wale ka naam likhein."
+            title: "Poori Jaankari Dein!",
+            description: "Kripya apna naam, bhai/behen ka naam aur apna gender chunein."
         });
         return;
     }
@@ -161,14 +165,15 @@ export default function CreateAlbumPage() {
       id: `${index + 1}`,
       imageUrl: mem.imageUrl,
       imageDescription: mem.imageDescription,
-      wish: mem.wish, // Wish can be generated on the album page
+      wish: mem.wish,
       year: mem.year,
       rotation: 0,
       scale: 1,
       dataAiHint: mem.imageDescription.split(' ').slice(0, 2).join(' '),
     }));
 
-    localStorage.setItem('raksha-bandhan-creator', JSON.stringify(creatorName));
+    const albumInfo = { creatorName, siblingName, creatorGender };
+    localStorage.setItem('raksha-bandhan-album-info', JSON.stringify(albumInfo));
     localStorage.setItem('raksha-bandhan-memories', JSON.stringify(memoriesForAlbum));
     localStorage.setItem('raksha-bandhan-album-created', 'true');
 
@@ -191,17 +196,50 @@ export default function CreateAlbumPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
-                <div className="space-y-2 border-b border-border/50 pb-6">
-                    <Label htmlFor="creator-name" className="text-base font-medium flex items-center gap-2">
-                       <User className="h-5 w-5 text-primary"/> Yeh Album Kaun Bana Raha Hai?
-                    </Label>
-                    <Input 
-                        id="creator-name" 
-                        placeholder="Aapka poora naam"
-                        value={creatorName}
-                        onChange={(e) => setCreatorName(e.target.value)}
-                        className="max-w-md"
-                    />
+                <div className="space-y-6 border-b border-border/50 pb-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                          <Label htmlFor="creator-name" className="text-base font-medium flex items-center gap-2">
+                            <User className="h-5 w-5 text-primary"/> Aapka Naam
+                          </Label>
+                          <Input 
+                              id="creator-name" 
+                              placeholder="Aapka poora naam"
+                              value={creatorName}
+                              onChange={(e) => setCreatorName(e.target.value)}
+                              className="mt-2"
+                          />
+                      </div>
+                      <div>
+                          <Label htmlFor="sibling-name" className="text-base font-medium flex items-center gap-2">
+                             <Users className="h-5 w-5 text-primary"/> Aapke Bhai/Behen ka Naam
+                          </Label>
+                          <Input 
+                              id="sibling-name" 
+                              placeholder="Unka poora naam"
+                              value={siblingName}
+                              onChange={(e) => setSiblingName(e.target.value)}
+                              className="mt-2"
+                          />
+                      </div>
+                    </div>
+                    <div>
+                       <Label className="text-base font-medium">Aapka Gender</Label>
+                       <RadioGroup
+                          onValueChange={setCreatorGender}
+                          value={creatorGender}
+                          className="flex items-center gap-6 mt-2"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="male" id="male" />
+                            <Label htmlFor="male" className="text-base">Ladka</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="female" id="female" />
+                            <Label htmlFor="female" className="text-base">Ladki</Label>
+                          </div>
+                        </RadioGroup>
+                    </div>
                 </div>
 
               {memories.map((memory, index) => (
@@ -334,3 +372,5 @@ export default function CreateAlbumPage() {
     </>
   );
 }
+
+    

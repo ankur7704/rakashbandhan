@@ -31,7 +31,9 @@ const yearThoughts = [
 
 export default function AlbumPage() {
   const [memories, setMemories] = useState<Memory[]>([]);
-  const [creatorName, setCreatorName] = useState<string>('Abhishek Kumar');
+  const [creatorName, setCreatorName] = useState<string>('');
+  const [siblingName, setSiblingName] = useState<string>('');
+  const [creatorGender, setCreatorGender] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImageGeneratorOpen, setIsImageGeneratorOpen] = useState(false);
   const [selectedMemoryForImage, setSelectedMemoryForImage] = useState<Memory | null>(null);
@@ -54,20 +56,27 @@ export default function AlbumPage() {
   const sortedYears = Object.keys(memoriesByYear).sort((a, b) => {
       if (a === "Purani Yaadein") return 1;
       if (b === "Purani Yaadein") return -1;
-      return parseInt(b) - parseInt(a);
+      const yearA = parseInt(a);
+      const yearB = parseInt(b);
+      if (isNaN(yearA)) return 1;
+      if (isNaN(yearB)) return -1;
+      return yearB - yearA;
   });
 
 
   useEffect(() => {
     try {
       const storedMemories = localStorage.getItem('raksha-bandhan-memories');
-      const storedCreator = localStorage.getItem('raksha-bandhan-creator');
+      const albumInfoString = localStorage.getItem('raksha-bandhan-album-info');
+
+      if (albumInfoString) {
+        const albumInfo = JSON.parse(albumInfoString);
+        setCreatorName(albumInfo.creatorName || '');
+        setSiblingName(albumInfo.siblingName || '');
+        setCreatorGender(albumInfo.creatorGender || '');
+      }
 
       if (storedMemories) {
-        if(storedCreator) {
-          setCreatorName(JSON.parse(storedCreator));
-        }
-
         const parsedMemories: Memory[] = JSON.parse(storedMemories);
         const memoriesWithStyles = parsedMemories.map((mem) => ({
           ...mem,
@@ -220,7 +229,7 @@ export default function AlbumPage() {
       </audio>
       <BackgroundAnimations />
       <div className="relative z-10 flex min-h-screen flex-col pt-8">
-        <Header />
+        <Header siblingName={siblingName} creatorGender={creatorGender}/>
         <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="carousel-container my-12 w-full h-[350px]">
             <div className="carousel" ref={carouselRef}>
@@ -318,3 +327,5 @@ export default function AlbumPage() {
     </>
   );
 }
+
+    

@@ -1,13 +1,32 @@
 import React from 'react';
 import { RakhiIcon } from './icons';
 
-const Header = () => {
+type HeaderProps = {
+  siblingName?: string;
+  creatorGender?: string;
+};
+
+const Header = ({ siblingName, creatorGender }: HeaderProps) => {
+
+  const getGreeting = () => {
+    if (!siblingName || !creatorGender) {
+      return "Raksha Bandhan ki Yaadein";
+    }
+    if (creatorGender === 'male') {
+      return `Raksha Bandhan ki Badhai ho, Pyaari Behen ${siblingName}!`;
+    }
+    if (creatorGender === 'female') {
+      return `Raksha Bandhan ki Badhai ho, Pyaare Bhai ${siblingName}!`;
+    }
+    return "Raksha Bandhan ki Yaadein";
+  };
+
   return (
     <header className="text-center mb-12">
       <div className="inline-flex items-center justify-center">
         <RakhiIcon className="h-12 w-12 text-primary -mr-2" />
-        <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary-foreground text-shadow-custom select-none">
-          Raksha Bandhan ki Yaadein
+        <h1 className="font-headline text-4xl md:text-6xl font-bold text-primary-foreground text-shadow-custom select-none">
+          {getGreeting()}
         </h1>
         <RakhiIcon className="h-12 w-12 text-primary -ml-2" />
       </div>
@@ -19,3 +38,5 @@ const Header = () => {
 };
 
 export default Header;
+
+    
