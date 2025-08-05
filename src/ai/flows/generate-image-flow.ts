@@ -38,7 +38,7 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
             model: 'googleai/gemini-2.0-flash-preview-image-generation',
             prompt: generationPrompt,
             config: {
-              responseModalities: ['IMAGE'],
+              responseModalities: ['TEXT', 'IMAGE'],
             },
         });
         
