@@ -11,6 +11,12 @@ import { googleAI } from '@genkit-ai/googleai';
 
 export async function generateVideo(input: GenerateVideoInput): Promise<any> {
     console.log("Starting video generation for:", input.prompt);
+
+    if (!process.env.GEMINI_API_KEY) {
+        console.error("GEMINI_API_KEY is not set.");
+        return { videoId: '', status: 'failed', error: 'Admin ne API Key set nahi ki hai. Kripya unse sampark karein.' };
+    }
+
     try {
         let { operation } = await ai.generate({
             model: googleAI.model('veo-2.0-generate-001'),
@@ -46,6 +52,11 @@ export async function generateVideo(input: GenerateVideoInput): Promise<any> {
 
 
 export async function checkVideoStatus(videoId: string): Promise<any> {
+    if (!process.env.GEMINI_API_KEY) {
+        console.error("GEMINI_API_KEY is not set.");
+        return { videoId: '', status: 'failed', error: 'Admin ne API Key set nahi ki hai. Kripya unse sampark karein.' };
+    }
+    
     try {
         let operation = await ai.checkOperation({ name: videoId });
         
@@ -62,10 +73,6 @@ export async function checkVideoStatus(videoId: string): Promise<any> {
             const video = operation.output?.message?.content.find((p) => !!p.media);
             if (!video || !video.media) {
                 throw new Error('Generated video not found in operation result');
-            }
-
-            if (!process.env.GEMINI_API_KEY) {
-                throw new Error('GEMINI_API_KEY environment variable is not set.');
             }
 
             const fetch = (await import('node-fetch')).default;
