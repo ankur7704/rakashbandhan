@@ -14,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ImagePlus, Wand2, Save, Trash2, X } from 'lucide-react';
 import { generateWishAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { DialogTitle } from '@/components/ui/dialog';
 
 const formSchema = z.object({
   imageFile: z.any().optional(),
@@ -121,9 +122,9 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
           <X className="h-6 w-6" />
         </button>
 
-        <h2 className="font-headline text-2xl md:text-3xl font-semibold mb-4 text-primary-foreground/80">
+        <DialogTitle className="font-headline text-2xl md:text-3xl font-semibold mb-4 text-primary-foreground/80">
           {memoryToEdit ? 'Edit this Memory' : 'Create a New Memory'}
-        </h2>
+        </DialogTitle>
         
         <div className="space-y-4 flex-grow">
           <div>
