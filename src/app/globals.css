@@ -126,7 +126,6 @@
     height: 320px; 
     transform-style: preserve-3d;
     transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.5s, z-index 0.5s;
-    backface-visibility: hidden;
     opacity: 1;
   }
   
