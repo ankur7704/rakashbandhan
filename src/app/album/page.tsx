@@ -249,43 +249,38 @@ export default function AlbumPage() {
         
         <section className="w-full max-w-6xl mx-auto mt-16 py-12 px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-headline text-center mb-12 text-primary-foreground/90 text-shadow-custom">Samay Ki Yaadein</h2>
-            <div className="relative pl-8 md:pl-0">
-              <div className="absolute left-4 top-0 bottom-0 w-1 bg-primary/20 rounded-full md:left-1/2 md:-translate-x-1/2"></div>
-              {sortedYears.map((year, yearIndex) => (
-                <div key={year} className="mb-16">
-                    <div className="timeline-year-marker absolute left-0 top-0 h-8 w-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold shadow-md md:left-1/2 md:-translate-x-1/2">
-                       {year.substring(2)}
-                    </div>
-                    <div className={`mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12`}>
-                      {memoriesByYear[year].map((memory, memoryIndex) => {
-                          const isLeft = memoryIndex % 2 === 0;
-                          return (
-                            <div key={memory.id} className={`timeline-item ${isLeft ? 'md:col-start-1 md:items-end' : 'md:col-start-2 md:items-start'}`}>
-                                <Card className="group bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full max-w-sm">
-                                    <CardContent className="p-4">
-                                      <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md mb-4">
-                                        <Image
-                                            src={memory.imageUrl}
-                                            alt={memory.imageDescription}
-                                            fill
-                                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                            data-ai-hint={memory.dataAiHint}
-                                          />
-                                          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                              <Button variant="secondary" onClick={() => handleOpenImageGenerator(memory)}>
-                                                  <Sparkles className="mr-2"/>
-                                                  Magic Moment Banayein
-                                              </Button>
-                                          </div>
-                                      </div>
-                                      <h3 className="font-headline text-lg text-primary-foreground/90">{memory.imageDescription}</h3>
-                                      <p className="text-sm text-muted-foreground mt-2 italic">"{memory.wish || thoughtCards[memoryIndex % thoughtCards.length].quote}"</p>
-                                    </CardContent>
-                                </Card>
+            <div className="memory-bus-container">
+              <div className="memory-bus-aisle"></div>
+              {sortedYears.map((year) => (
+                <div key={year} className="memory-bus-year-group">
+                  <div className="memory-bus-year-marker">{year}</div>
+                  <div className="memory-bus-seats">
+                    {memoriesByYear[year].map((memory, memoryIndex) => (
+                      <div key={memory.id} className="memory-bus-seat">
+                        <Card className="group bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full">
+                          <CardContent className="p-4">
+                            <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md mb-4">
+                              <Image
+                                src={memory.imageUrl}
+                                alt={memory.imageDescription}
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                data-ai-hint={memory.dataAiHint}
+                              />
+                              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <Button variant="secondary" onClick={() => handleOpenImageGenerator(memory)}>
+                                  <Sparkles className="mr-2"/>
+                                  Magic Moment Banayein
+                                </Button>
+                              </div>
                             </div>
-                          )
-                      })}
-                    </div>
+                            <h3 className="font-headline text-lg text-primary-foreground/90">{memory.imageDescription}</h3>
+                            <p className="text-sm text-muted-foreground mt-2 italic">"{memory.wish || thoughtCards[memoryIndex % thoughtCards.length].quote}"</p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>

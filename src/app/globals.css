@@ -139,7 +139,6 @@
     transition: opacity 0.5s ease;
   }
   
-  /* Make back cards transparent */
   .carousel-card.is-back {
     opacity: 0.4;
   }
@@ -173,22 +172,67 @@
     transform: translateY(-5px) scale(1.03);
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   }
+  
+  /* Memory Bus Layout */
+  .memory-bus-container {
+    position: relative;
+    padding: 2rem 0;
+  }
+  
+  .memory-bus-aisle {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: hsl(var(--primary) / 0.3);
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
+  
+  .memory-bus-year-group {
+    position: relative;
+    margin-bottom: 4rem;
+  }
+  
+  .memory-bus-year-marker {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -50%);
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+    z-index: 10;
+    box-shadow: 0 4px 10px hsl(var(--primary) / 0.4);
+    animation: popIn 0.5s ease-out 0.3s forwards;
+    transform-origin: center;
+    transform: scale(0);
+  }
 
-  .timeline-item {
-    display: flex;
-    flex-direction: column;
+  @keyframes popIn {
+      to {
+          transform: scale(1);
+      }
+  }
+  
+  .memory-bus-seats {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 1rem 2rem;
+    margin-top: 3rem;
+  }
+  
+  .memory-bus-seat {
+    position: relative;
     animation: slideInUp 0.6s ease-out forwards;
     opacity: 0;
     transform: translateY(30px);
   }
-
-  .timeline-item:nth-child(odd) {
-    animation-delay: 0.1s;
-  }
-  .timeline-item:nth-child(even) {
-      animation-delay: 0.2s;
-  }
-
+  
   @keyframes slideInUp {
       to {
           opacity: 1;
@@ -196,14 +240,30 @@
       }
   }
 
-  .timeline-year-marker {
-    animation: popIn 0.5s ease-out 0.3s forwards;
-    transform: scale(0);
+  .memory-bus-seat:nth-child(odd) {
+    grid-column: 1;
+    animation-delay: 0.2s;
   }
-  @keyframes popIn {
-      to {
-          transform: scale(1);
-      }
+  
+  .memory-bus-seat:nth-child(even) {
+    grid-column: 3;
+    animation-delay: 0.4s;
   }
 
+  .memory-bus-seat::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    height: 2px;
+    background-color: hsl(var(--border));
+    width: 2rem; 
+  }
+
+  .memory-bus-seat:nth-child(odd)::before {
+    right: -2rem; 
+  }
+
+  .memory-bus-seat:nth-child(even)::before {
+    left: -2rem; 
+  }
 }
