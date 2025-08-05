@@ -40,7 +40,7 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
         setWish(result.wish || "Ek anokha pal!");
         toast({ title: 'Jaadui Image Taiyaar!', description: 'AI ne aapke liye ek anokhi image banayi hai.' });
       } else {
-        throw new Error(result.error || 'Image generation failed to start.');
+        throw new Error(result.error || 'Image generation failed. AI did not return an image.');
       }
     } catch (e) {
       const err = e as Error;
@@ -68,7 +68,7 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
               );
           case 'generating':
               return (
-                  <div className="flex flex-col items-center justify-center text-center p-8">
+                  <div className="flex flex-col items-center justify-center text-center p-8 min-h-[300px]">
                        <Loader className="w-16 h-16 text-primary animate-spin mb-4"/>
                        <h2 className="text-xl font-headline mb-2">Kalpana Ko Rang Mil Rahe Hain...</h2>
                        <p className="text-muted-foreground">AI aapki yaad se ek naya art piece bana raha hai. Kripya intezaar karein.</p>
@@ -80,8 +80,18 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
                       {imageUrl ? (
                          <>
                             <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg bg-gray-100 flex items-center justify-center">
+                                {/* Using a standard img tag for better compatibility with external/data URLs from the AI */}
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={imageUrl} alt="Generated magic moment" className="object-contain h-full w-full" />
+                                <img 
+                                    src={imageUrl} 
+                                    alt="Generated magic moment" 
+                                    className="object-contain h-full w-full"
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none'; // Hide broken image icon
+                                        setError('Generated image could not be loaded.');
+                                    }}
+                                />
+                                {error && <div className="text-destructive text-sm p-4">{error}</div>}
                             </div>
                             {wish && <p className="mt-4 text-lg font-headline text-primary-foreground/90 italic">"{wish}"</p>}
                             <div className="flex justify-center mt-4">
@@ -91,9 +101,10 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
                             </div>
                          </>
                       ) : (
-                        <div className="flex flex-col items-center justify-center text-center p-8">
+                        <div className="flex flex-col items-center justify-center text-center p-8 min-h-[300px]">
                            <AlertTriangle className="w-16 h-16 text-destructive mb-4"/>
                            <h2 className="text-xl font-headline mb-2">Image Load Nahi Hui</h2>
+                           <p className="text-muted-foreground mb-6 max-w-sm">{error || "AI ne image nahi bheji. Kripya dobara koshish karein."}</p>
                            <Button onClick={handleGenerateClick} variant="outline">
                                 <RefreshCcw className="mr-2" /> Dobara Koshish Karein
                             </Button>
@@ -103,7 +114,7 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
               )
           case 'failed':
                return (
-                <div className="flex flex-col items-center justify-center text-center p-8">
+                <div className="flex flex-col items-center justify-center text-center p-8 min-h-[300px]">
                     <AlertTriangle className="w-16 h-16 text-destructive mb-4"/>
                     <h2 className="text-xl font-headline mb-2">Kuch Gadbad Ho Gayi</h2>
                     <p className="text-muted-foreground mb-6 max-w-sm">{error}</p>
