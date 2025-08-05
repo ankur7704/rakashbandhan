@@ -10,7 +10,8 @@ import type { GenerateImageInput, GenerateImageOutput } from '@/types';
 import {z} from 'genkit';
 
 const GenerateImageOutputSchema = z.object({
-  imageUrl: z.string().describe('The URL of the generated image.'),
+  // The output is now a base64 data URI
+  imageUrl: z.string().describe('The generated image as a data URI.'),
   wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
   status: z.enum(['completed', 'failed']),
   error: z.string().optional(),
@@ -29,30 +30,6 @@ const funnyPrompts = [
     "Create a funny image of the siblings as astronauts floating in space, arguing over who gets the window seat in the spaceship. Their faces must be from the original photo."
 ];
 
-const prompt = ai.definePrompt({
-    name: 'generateFunnyImagePrompt',
-    input: { schema: z.object({
-        prompt: z.string(),
-        imageDataUri: z.string()
-    })},
-    output: { schema: z.object({
-        imageUrl: z.string().describe('A URL of the newly generated image.'),
-        wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
-    }) },
-
-    prompt: `You are a creative AI that generates funny and personal images for Raksha Bandhan. Your task is to take an original photo and a theme, and create a new, hilarious image and a matching witty caption in Hinglish.
-
-    **CRITICAL, NON-NEGOTIABLE INSTRUCTIONS:**
-    1.  **PRESERVE FACES FROM THE ORIGINAL PHOTO:** This is the most important rule. You MUST use the exact faces of the people from the original photo provided. Do not alter their faces, generate new faces, or replace them. The new image's characters MUST be perfectly recognizable as the same individuals from the original photo. Failure to do this will ruin the purpose of the image.
-    2.  **FUNNY THEME:** Generate a new image based on the following creative theme: {{{prompt}}}
-    3.  **FUNNY CAPTION:** Write a completely new, short, funny, and comedic caption or wish in Hinglish for the image you just generated. The caption must be about the playful sibling relationship (nok-jhok) and should humorously describe the new scene.
-
-    **ORIGINAL PHOTO (Use faces from here):**
-    {{media url=imageDataUri}}
-    `,
-});
-
-
 export async function generateImage(input: GenerateImageInput): Promise<GenerateImageOutput> {
     console.log("Starting image generation for:", input.prompt);
 
@@ -68,16 +45,42 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
 
         const randomPrompt = funnyPrompts[Math.floor(Math.random() * funnyPrompts.length)];
         
-        const { output } = await prompt({
-            prompt: randomPrompt,
-            imageDataUri: input.imageDataUri
-        });
+        const generationPrompt = `
+            You are a creative AI that generates funny and personal images for Raksha Bandhan. Your task is to take an original photo and a theme, and create a new, hilarious image and a matching witty caption in Hinglish.
 
-        if (!output?.imageUrl) {
+            **CRITICAL, NON-NEGOTIABLE INSTRUCTIONS:**
+            1.  **PRESERVE FACES FROM THE ORIGINAL PHOTO:** This is the most important rule. You MUST use the exact faces of the people from the original photo provided. The new image's characters MUST be perfectly recognizable as the same individuals from the original photo, with at least an 85% likeness. Do not alter their faces, generate new faces, or replace them. Failure to do this will ruin the purpose of the image.
+            2.  **FUNNY THEME:** Generate a new image based on the following creative theme: ${randomPrompt}
+            3.  **FUNNY CAPTION:** Write a completely new, short, funny, and comedic caption or wish in Hinglish for the image you just generated. The caption must be about the playful sibling relationship (nok-jhok) and should humorously describe the new scene.
+
+            Analyze the original photo to identify the faces and their features. Then, seamlessly integrate those exact faces onto the new characters in the scene described by the funny theme. The background and bodies should be transformed, but the faces must remain consistent.
+        `;
+
+        const { media, output } = await ai.generate({
+            model: 'googleai/gemini-2.0-flash-preview-image-generation',
+            prompt: [
+              { media: { url: input.imageDataUri } },
+              { text: generationPrompt },
+            ],
+            output: {
+                schema: z.object({
+                    wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
+                })
+            },
+            config: {
+              responseModalities: ['TEXT', 'IMAGE'],
+            },
+        });
+        
+        if (!media?.url) {
             throw new Error("Image generation did not return an image.");
         }
 
-        return { ...output, status: 'completed' };
+        return { 
+            imageUrl: media.url, // This is a data URI
+            wish: output?.wish || "Ek anokha pal!", 
+            status: 'completed' 
+        };
 
     } catch(e) {
         console.error("Error during image generation:", e);
