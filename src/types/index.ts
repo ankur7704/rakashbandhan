@@ -13,12 +13,11 @@ export type Memory = {
 
 export const GenerateImageInputSchema = z.object({
   prompt: z.string().describe('A prompt to guide the image generation.'),
-  imageDataUri: z.string().optional().describe("The original image to transform, as a data URI."),
 });
 export type GenerateImageInput = z.infer<typeof GenerateImageInputSchema>;
 
 export const GenerateImageOutputSchema = z.object({
-  imageUrl: z.string().url(),
+  imageUrl: z.string(),
   wish: z.string(),
   status: z.enum(['completed', 'failed']),
   error: z.string().optional(),

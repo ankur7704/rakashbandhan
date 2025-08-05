@@ -28,10 +28,8 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
     setWish(null);
 
     try {
-      // Prompt is now selected randomly in the backend flow
       const result = await generateImageAction({
-          prompt: memory.imageDescription, // This can be used for context if needed
-          imageDataUri: memory.imageUrl
+          prompt: `Ek bhai aur behen, ${memory.imageDescription}`,
       });
 
       if (result.status === 'completed' && result.imageUrl) {
@@ -60,7 +58,7 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
                       </div>
                       <Sparkles className="w-12 h-12 text-primary mb-2"/>
                       <h2 className="text-xl font-headline mb-2">Ek Jaadui Pal Banayein</h2>
-                      <p className="text-muted-foreground mb-6">Is photo ke chehron ka istemaal karke AI ko ek bilkul nayi, mazedaar image banane dein.</p>
+                      <p className="text-muted-foreground mb-6">Is yaad ke description se AI ko ek mazedaar cartoon image banane dein.</p>
                       <Button onClick={handleGenerateClick}>
                           <Sparkles className="mr-2"/> Abhi Banayein
                       </Button>
@@ -80,22 +78,12 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
                       {imageUrl ? (
                          <>
                             <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg bg-gray-100 flex items-center justify-center">
-                                {/* Using a standard img tag for better compatibility with external/data URLs from the AI */}
+                                {/* Using a standard img tag for better compatibility with data URIs from the AI */}
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img 
                                     src={imageUrl} 
                                     alt="Generated magic moment" 
                                     className="object-contain h-full w-full"
-                                    onError={(e) => {
-                                        e.currentTarget.style.display = 'none'; // Hide broken image icon
-                                        const parent = e.currentTarget.parentElement;
-                                        if (parent) {
-                                            const errorDiv = document.createElement('div');
-                                            errorDiv.className = 'text-destructive text-sm p-4';
-                                            errorDiv.innerText = 'Generated image could not be loaded. It might be an invalid format.';
-                                            parent.appendChild(errorDiv);
-                                        }
-                                    }}
                                 />
                             </div>
                             {wish && <p className="mt-4 text-lg font-headline text-primary-foreground/90 italic">"{wish}"</p>}
