@@ -79,8 +79,9 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
                   <div className="p-4 text-center">
                       {imageUrl ? (
                          <>
-                            <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg">
-                                <Image src={imageUrl} alt="Generated magic moment" fill className="object-contain" />
+                            <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg bg-gray-100 flex items-center justify-center">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={imageUrl} alt="Generated magic moment" className="object-contain h-full w-full" />
                             </div>
                             {wish && <p className="mt-4 text-lg font-headline text-primary-foreground/90 italic">"{wish}"</p>}
                             <div className="flex justify-center mt-4">
