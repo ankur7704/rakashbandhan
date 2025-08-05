@@ -206,16 +206,6 @@ export default function AlbumPage() {
               ))}
             </div>
           </div>
-          <div className="flex flex-col items-center gap-4 mt-8">
-             <div className="flex items-center gap-4">
-               <Button variant="outline" onClick={() => router.push('/')}>
-                  Editor Par Vaapas Jayein
-               </Button>
-               <Button onClick={handleAddNew}>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Nayi Yaad Jodein
-               </Button>
-             </div>
-          </div>
         </main>
         
         <section className="w-full max-w-6xl mx-auto mt-20 py-12">
