@@ -8,9 +8,11 @@ import BackgroundAnimations from '@/components/background-animations';
 import MemoryCard from '@/components/memory-card';
 import MemoryForm from '@/components/memory-form';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, ArrowLeftCircle, ArrowRightCircle } from 'lucide-react';
 import { generateWishAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+
 
 const initialMemoriesData: Omit<Memory, 'rotation' | 'scale'>[] = [
   {
@@ -40,12 +42,17 @@ export default function Home() {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMemory, setEditingMemory] = useState<Memory | null>(null);
+  const [rotation, setRotation] = useState(0);
   const { toast } = useToast();
+
+  const totalMemories = memories.length + 1; // including 'add new' card
+  const angle = 360 / totalMemories;
+  const radius = 300 / (2 * Math.tan(Math.PI / totalMemories));
 
   useEffect(() => {
     const memoriesWithStyles = initialMemoriesData.map((mem) => ({
       ...mem,
-      rotation: Math.random() * 8 - 4,
+      rotation: 0,
       scale: 1,
     }));
     setMemories(memoriesWithStyles);
@@ -98,7 +105,7 @@ export default function Home() {
         imageUrl,
         imageDescription: formData.imageDescription,
         wish: finalWish,
-        rotation: Math.random() * 8 - 4,
+        rotation: 0,
         scale: 1,
         dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
       };
@@ -116,35 +123,63 @@ export default function Home() {
     setEditingMemory(null);
   };
 
+  const rotateCarousel = (direction: 'next' | 'prev') => {
+    setRotation(prev => prev + (direction === 'next' ? -angle : angle));
+  };
 
   return (
     <>
       <BackgroundAnimations />
       <div className="relative z-10 flex min-h-screen flex-col px-4 pt-8 sm:px-6 lg:px-8">
         <Header />
-        <main className="flex-grow">
-          <div className="container mx-auto py-12">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {memories.map((memory) => (
-                <MemoryCard
-                  key={memory.id}
-                  memory={memory}
-                  onClick={() => handleOpenModal(memory)}
-                />
-              ))}
+        <main className="flex-grow flex flex-col items-center justify-center">
+          <div className="carousel-container my-12">
+            <div className="carousel" style={{ transform: `rotateY(${rotation}deg)` }}>
+              {memories.map((memory, index) => {
+                  const cardAngle = angle * index;
+                  return (
+                    <div
+                      key={memory.id}
+                      className="carousel-card"
+                      style={{
+                        transform: `rotateY(${cardAngle}deg) translateZ(${radius}px)`,
+                      }}
+                    >
+                      <MemoryCard
+                        memory={memory}
+                        onClick={() => handleOpenModal(memory)}
+                      />
+                    </div>
+                  );
+                })}
               <div
-                className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 bg-primary/10 p-8 text-center text-primary/80 transition-all duration-300 hover:border-primary hover:bg-primary/20 hover:text-primary hover:shadow-xl"
-                onClick={() => handleOpenModal(null)}
-                role="button"
-                aria-label="Add new memory"
+                className="carousel-card"
+                 style={{
+                    transform: `rotateY(${angle * memories.length}deg) translateZ(${radius}px)`,
+                  }}
               >
-                <PlusCircle className="mb-4 h-12 w-12" />
-                <h3 className="font-headline text-xl font-semibold">
-                  Add a New Memory
-                </h3>
-                <p className="mt-1 text-sm">Click here to upload a new moment.</p>
+                <div
+                  className="flex h-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 bg-primary/10 p-8 text-center text-primary/80 transition-all duration-300 hover:border-primary hover:bg-primary/20 hover:text-primary hover:shadow-xl"
+                  onClick={() => handleOpenModal(null)}
+                  role="button"
+                  aria-label="Add new memory"
+                >
+                  <PlusCircle className="mb-4 h-12 w-12" />
+                  <h3 className="font-headline text-xl font-semibold">
+                    Add a New Memory
+                  </h3>
+                  <p className="mt-1 text-sm">Click here to upload a new moment.</p>
+                </div>
               </div>
             </div>
+          </div>
+          <div className="flex items-center gap-8">
+            <Button variant="ghost" size="icon" onClick={() => rotateCarousel('prev')} className="h-16 w-16 text-primary hover:text-primary-foreground">
+              <ArrowLeftCircle className="h-12 w-12" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => rotateCarousel('next')} className="h-16 w-16 text-primary hover:text-primary-foreground">
+              <ArrowRightCircle className="h-12 w-12" />
+            </Button>
           </div>
         </main>
         <Footer />

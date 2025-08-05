@@ -89,17 +89,27 @@
     text-shadow: 2px 2px 4px hsl(var(--primary) / 0.5);
   }
 
-  .animate-rotate-3d {
-    animation: rotate-3d 20s linear infinite;
-    transform-style: preserve-3d;
+  .carousel-container {
+    perspective: 1500px;
+    width: 300px;
+    height: 450px;
+    position: relative;
+    margin: 0 auto;
   }
 
-  @keyframes rotate-3d {
-    from {
-      transform: perspective(800px) rotateY(0deg);
-    }
-    to {
-      transform: perspective(800px) rotateY(360deg);
-    }
+  .carousel {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 1s;
+  }
+
+  .carousel-card {
+    position: absolute;
+    width: 300px;
+    height: 400px;
+    backface-visibility: hidden;
+    transition: transform 1s, opacity 1s;
   }
 }
