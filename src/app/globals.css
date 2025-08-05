@@ -90,12 +90,12 @@
   }
 
   .carousel-container {
-    perspective: 2000px;
+    perspective: 2500px;
     width: 100%;
-    max-width: 1000px;
-    height: 400px; /* Reduced height */
+    height: 350px; /* Reduced height */
     position: relative;
     margin: 0 auto;
+    padding: 0 2rem;
   }
 
   .carousel {
@@ -123,20 +123,47 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    margin-left: -125px; /* width / -2 */
-    margin-top: -175px; /* height / -2 */
-    width: 250px; /* Slightly smaller cards */
-    height: 350px; /* Slightly smaller cards */
+    margin-left: -112px; /* width / -2 */
+    margin-top: -150px; /* height / -2 */
+    width: 225px; /* Smaller cards */
+    height: 300px; /* Smaller cards */
     transform-style: preserve-3d;
     transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.5s, z-index 0.5s;
-    opacity: 0.95;
-    backface-visibility: hidden; /* Prevent flickering on rotation */
+    backface-visibility: visible; /* Show back of cards */
   }
   
   .carousel-card:hover {
     transform: var(--transform-hover) !important;
     z-index: 100;
     opacity: 1;
+  }
+  
+  .carousel-card > div {
+    /* This targets the MemoryCard component inside */
+    transition: opacity 0.5s ease;
+  }
+  
+  /* Make cards in the back semi-transparent */
+  .carousel-card[style*="rotateY(90deg)"] > div,
+  .carousel-card[style*="rotateY(100deg)"] > div,
+  .carousel-card[style*="rotateY(110deg)"] > div,
+  .carousel-card[style*="rotateY(120deg)"] > div,
+  .carousel-card[style*="rotateY(130deg)"] > div,
+  .carousel-card[style*="rotateY(140deg)"] > div,
+  .carousel-card[style*="rotateY(150deg)"] > div,
+  .carousel-card[style*="rotateY(160deg)"] > div,
+  .carousel-card[style*="rotateY(170deg)"] > div,
+  .carousel-card[style*="rotateY(180deg)"] > div,
+  .carousel-card[style*="rotateY(190deg)"] > div,
+  .carousel-card[style*="rotateY(200deg)"] > div,
+  .carousel-card[style*="rotateY(210deg)"] > div,
+  .carousel-card[style*="rotateY(220deg)"] > div,
+  .carousel-card[style*="rotateY(230deg)"] > div,
+  .carousel-card[style*="rotateY(240deg)"] > div,
+  .carousel-card[style*="rotateY(250deg)"] > div,
+  .carousel-card[style*="rotateY(260deg)"] > div,
+  .carousel-card[style*="rotateY(270deg)"] > div {
+    opacity: 0.4;
   }
 
   .inspiration-card {

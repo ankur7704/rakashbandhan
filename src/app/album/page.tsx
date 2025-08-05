@@ -166,7 +166,7 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.min(total * 40, 320); // Adjust radius based on number of cards
+    const radius = Math.min(total * 50, 400); // Increased radius for more gap
     const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
     return {
@@ -189,7 +189,7 @@ export default function AlbumPage() {
       <div className="relative z-10 flex min-h-screen flex-col px-4 pt-8 sm:px-6 lg:px-8">
         <Header />
         <main className="flex-grow flex flex-col items-center justify-center">
-          <div className="carousel-container my-12">
+          <div className="carousel-container my-8">
             <div className="carousel">
               {memories.map((memory, index) => (
                 <div
