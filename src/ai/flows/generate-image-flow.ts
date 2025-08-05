@@ -27,34 +27,41 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
     try {
         const generationPrompt = `
             You are a creative AI that generates funny and personal cartoon-style images for Raksha Bandhan. 
-            Your task is to take a description of a memory and create a new, hilarious cartoon image and a matching witty caption in Hinglish.
+            Your task is to take a description of a memory and create a new, hilarious cartoon image.
 
             **INSTRUCTIONS:**
             1.  **FUNNY CARTOON STYLE:** Generate a new, funny cartoon or caricature based on the following theme. The image should be vibrant, comical, and light-hearted.
             2.  **THEME:** ${input.prompt}
-            3.  **FUNNY CAPTION:** Write a completely new, short, funny, and comedic caption or wish in Hinglish for the image you just generated. The caption must be about the playful sibling relationship (nok-jhok) and should humorously describe the new scene.
         `;
 
-        const { media, output } = await ai.generate({
+        const { media } = await ai.generate({
             model: 'googleai/gemini-2.0-flash-preview-image-generation',
             prompt: generationPrompt,
-            output: {
-                schema: z.object({
-                    wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
-                })
-            },
             config: {
-              responseModalities: ['TEXT', 'IMAGE'],
+              responseModalities: ['IMAGE'],
             },
         });
         
         if (!media?.url) {
             throw new Error("Image generation did not return an image.");
         }
+        
+        // Now, generate a wish for the image
+        const wishResult = await ai.generate({
+            model: 'googleai/gemini-2.0-flash',
+            prompt: `Based on this theme for a Raksha Bandhan image, write a completely new, short, funny, and comedic caption or wish in Hinglish. The caption must be about the playful sibling relationship (nok-jhok) and should humorously describe the new scene. Theme: ${input.prompt}`,
+            output: {
+                schema: z.object({
+                    wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
+                })
+            }
+        });
+        
+        const wish = wishResult.output?.wish || "Ek anokha pal!";
 
         return { 
             imageUrl: media.url, // This is a data URI
-            wish: output?.wish || "Ek anokha pal!", 
+            wish: wish, 
             status: 'completed' 
         };
 
