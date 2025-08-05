@@ -10,7 +10,7 @@ import type { GenerateImageInput, GenerateImageOutput } from '@/types';
 import {z} from 'genkit';
 
 const GenerateImageOutputSchema = z.object({
-  imageUrl: z.string(),
+  imageUrl: z.string().describe('The URL of the generated image.'),
   wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
   status: z.enum(['completed', 'failed']),
   error: z.string().optional(),
@@ -32,7 +32,10 @@ const prompt = ai.definePrompt({
         prompt: z.string(),
         imageDataUri: z.string()
     })},
-    output: { schema: GenerateImageOutputSchema },
+    output: { schema: z.object({
+        imageUrl: z.string().describe('The URL of the generated image.'),
+        wish: z.string().describe('A new, funny, and comedic wish or caption for the generated image, written in Hinglish. It should reflect the playful banter (nok-jhok) between siblings.'),
+    }) },
 
     prompt: `You are a creative AI that generates funny and personal images for Raksha Bandhan. Your task is to take an original photo and a theme, and create a new, hilarious image and a matching witty caption in Hinglish.
 
