@@ -14,17 +14,10 @@ type ImageGeneratorProps = {
 
 type ImageStatus = 'idle' | 'generating' | 'completed' | 'failed';
 
-const prompts = [
-    "Recreate this photo as a funny cartoon.",
-    "Turn this moment into a dreamy, watercolor-style painting.",
-    "Imagine this scene in a beautiful, glowing fantasy world.",
-    "Redraw this in a vintage, old-timey comic book style.",
-    "An abstract artwork inspired by the emotions of this photo."
-];
-
 export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps) {
   const [status, setStatus] = useState<ImageStatus>('idle');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [wish, setWish] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -32,17 +25,19 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
     setStatus('generating');
     setError(null);
     setImageUrl(null);
+    setWish(null);
 
     try {
-      const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-      const result = await generateImageAction({ 
-          prompt: `${randomPrompt}. The original memory is about: ${memory.imageDescription}`,
+      // Prompt is now selected randomly in the backend flow
+      const result = await generateImageAction({
+          prompt: memory.imageDescription, // This can be used for context if needed
           imageDataUri: memory.imageUrl
       });
 
       if (result.status === 'completed' && result.imageUrl) {
         setStatus('completed');
         setImageUrl(result.imageUrl);
+        setWish(result.wish || "Ek anokha pal!");
         toast({ title: 'Jaadui Image Taiyaar!', description: 'AI ne aapke liye ek anokhi image banayi hai.' });
       } else {
         throw new Error(result.error || 'Image generation failed to start.');
@@ -65,7 +60,7 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
                       </div>
                       <Sparkles className="w-12 h-12 text-primary mb-2"/>
                       <h2 className="text-xl font-headline mb-2">Ek Jaadui Pal Banayein</h2>
-                      <p className="text-muted-foreground mb-6">Is photo se prerna lekar AI ko ek bilkul nayi, kalpana se bhari image banane dein.</p>
+                      <p className="text-muted-foreground mb-6">Is photo ke chehron ka istemaal karke AI ko ek bilkul nayi, mazedaar image banane dein.</p>
                       <Button onClick={handleGenerateClick}>
                           <Sparkles className="mr-2"/> Abhi Banayein
                       </Button>
@@ -81,12 +76,13 @@ export default function ImageGenerator({ memory, onClose }: ImageGeneratorProps)
               )
           case 'completed':
               return (
-                  <div className="p-4">
+                  <div className="p-4 text-center">
                       {imageUrl ? (
                          <>
-                            <div className="relative w-full aspect-square rounded-lg overflow-hidden">
+                            <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg">
                                 <Image src={imageUrl} alt="Generated magic moment" fill className="object-contain" />
                             </div>
+                            {wish && <p className="mt-4 text-lg font-headline text-primary-foreground/90 italic">"{wish}"</p>}
                             <div className="flex justify-center mt-4">
                                <Button onClick={handleGenerateClick} variant="outline">
                                   <RefreshCcw className="mr-2" /> Naya Banayein

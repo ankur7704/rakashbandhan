@@ -1,7 +1,7 @@
 'use server';
 
 import { generateRakshaBandhanWish, GenerateRakshaBandhanWishInput } from '@/ai/flows/generate-raksha-bandhan-wish';
-import { generateImage } from '@/ai/flows/generate-image-flow';
+import { generateImage, GenerateImageOutput } from '@/ai/flows/generate-image-flow';
 import type { GenerateImageInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 
@@ -15,7 +15,7 @@ export async function generateWishAction(input: GenerateRakshaBandhanWishInput) 
   }
 }
 
-export async function generateImageAction(input: GenerateImageInput) {
+export async function generateImageAction(input: GenerateImageInput): Promise<GenerateImageOutput> {
     try {
         const result = await generateImage(input);
         revalidatePath('/album');
