@@ -3,6 +3,7 @@ export type Memory = {
   imageUrl: string;
   imageDescription: string;
   wish: string;
+  year: string;
   rotation: number;
   scale: number;
   dataAiHint?: string;

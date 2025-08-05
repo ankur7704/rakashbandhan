@@ -20,6 +20,7 @@ const formSchema = z.object({
   imageFile: z.any().optional(),
   imageDescription: z.string().min(10, 'Kripya thoda aur vistaar se likhein.').max(200),
   wish: z.string().optional(),
+  year: z.string().min(4, 'Sahi saal likhein.').max(4, 'Sahi saal likhein.'),
 });
 
 type MemoryFormProps = {
@@ -28,6 +29,7 @@ type MemoryFormProps = {
     imageFile?: File;
     imageDescription: string;
     wish: string;
+    year: string;
     imagePreview?: string;
   }) => Promise<void>;
   onDelete?: () => void;
@@ -45,6 +47,7 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
     defaultValues: {
       imageDescription: memoryToEdit?.imageDescription || '',
       wish: memoryToEdit?.wish || '',
+      year: memoryToEdit?.year || new Date().getFullYear().toString(),
     },
   });
 
@@ -128,6 +131,18 @@ const MemoryForm = ({ memoryToEdit, onSave, onDelete, onClose }: MemoryFormProps
         </DialogTitle>
         
         <div className="space-y-4 flex-grow">
+          <div>
+            <Label htmlFor="year">Yaad ka Saal</Label>
+            <Input
+              id="year"
+              type="number"
+              placeholder="Jaise, 2015"
+              {...form.register('year')}
+              className="mt-1"
+            />
+            {form.formState.errors.year && <p className="text-destructive text-sm mt-1">{form.formState.errors.year.message}</p>}
+          </div>
+
           <div>
             <Label htmlFor="imageDescription">Us pal ko bayaan karein</Label>
             <Textarea

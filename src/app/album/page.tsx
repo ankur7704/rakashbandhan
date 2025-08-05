@@ -15,7 +15,7 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui/button';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, CalendarIcon } from 'lucide-react';
 
 
 const thoughtCards = [
@@ -53,6 +53,17 @@ export default function AlbumPage() {
   const router = useRouter();
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  
+  const memoriesByYear = memories.reduce((acc, memory) => {
+    const year = memory.year || "Purani Yaadein";
+    if (!acc[year]) {
+      acc[year] = [];
+    }
+    acc[year].push(memory);
+    return acc;
+  }, {} as Record<string, Memory[]>);
+
+  const sortedYears = Object.keys(memoriesByYear).sort((a, b) => parseInt(b) - parseInt(a));
 
 
   useEffect(() => {
@@ -96,35 +107,34 @@ export default function AlbumPage() {
     setIsModalOpen(true);
   };
   
-  const handleAddNew = () => {
-    setEditingMemory(null);
-    setIsModalOpen(true);
-  }
-
   const handleSaveMemory = async (formData: {
     imageFile?: File;
     imageDescription: string;
     wish: string;
+    year: string;
     imagePreview?: string;
   }) => {
     let imageUrl = formData.imagePreview;
   
     if (editingMemory) {
-      setMemories(
-        memories.map((mem) =>
+       const updatedMemories = memories.map((mem) =>
           mem.id === editingMemory.id
             ? {
                 ...mem,
                 imageDescription: formData.imageDescription,
                 wish: formData.wish,
+                year: formData.year,
                 imageUrl: imageUrl || mem.imageUrl,
                 dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
               }
             : mem
-        )
-      );
+        );
+      setMemories(updatedMemories);
+      localStorage.setItem('raksha-bandhan-memories', JSON.stringify(updatedMemories));
       toast({ title: "Yaad Update Ho Gayi!", description: "Aapki khoobsurat yaad save ho gayi hai." });
     } else {
+      // This part might not be used anymore since we add from the main page
+      // But keeping it for robustness
       if (!imageUrl) {
         imageUrl = 'https://placehold.co/600x400.png';
       }
@@ -149,11 +159,14 @@ export default function AlbumPage() {
         imageUrl,
         imageDescription: formData.imageDescription,
         wish: finalWish,
+        year: formData.year,
         rotation: 0,
         scale: 1,
         dataAiHint: formData.imageDescription.split(' ').slice(0,2).join(' ')
       };
-      setMemories([...memories, newMemory]);
+      const newMemories = [...memories, newMemory];
+      setMemories(newMemories);
+      localStorage.setItem('raksha-bandhan-memories', JSON.stringify(newMemories));
       toast({ title: "Nayi Yaad Jud Gayi!", description: "Ek aur anmol pal aapke album mein jud gaya hai." });
     }
     setIsModalOpen(false);
@@ -163,6 +176,7 @@ export default function AlbumPage() {
   const handleDeleteMemory = (id: string) => {
     const newMemories = memories.filter((mem) => mem.id !== id);
     setMemories(newMemories);
+    localStorage.setItem('raksha-bandhan-memories', JSON.stringify(newMemories));
     toast({ variant: "destructive", title: "Yaad Mita Di Gayi", description: "Yeh yaad aapke album se hata di gayi hai." });
     setIsModalOpen(false);
     setEditingMemory(null);
@@ -171,7 +185,7 @@ export default function AlbumPage() {
   const getCardStyle = (index: number, total: number) => {
     if (total === 0) return {};
     const angle = (360 / total) * index;
-    const radius = Math.min(total * 45, 300); 
+    const radius = Math.min(total * 40, 250); 
     const transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
     const transformHover = `rotateY(${angle}deg) translateZ(${radius}px) scale(1.1)`;
     return {
@@ -229,32 +243,40 @@ export default function AlbumPage() {
         </main>
         
         <section className="w-full max-w-6xl mx-auto mt-20 py-12">
-            <h2 className="text-3xl font-headline text-center mb-2 text-primary-foreground/90 text-shadow-custom">Aapki Yaadon Ke Kuch Pal</h2>
-            <p className="text-center text-muted-foreground mb-8">Har tasveer ek kahani kehti hai. Yahan kuch dil se nikle vichar hain!</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {memories.map((memory, index) => {
-                const thought = thoughtCards[index % thoughtCards.length];
-                return (
-                  <div key={memory.id} className="inspiration-card">
-                    <Card className={`h-full ${thought.color} bg-opacity-70 backdrop-blur-sm overflow-hidden`}>
-                        <CardContent className="p-4 flex flex-col">
-                           <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden shadow-md mb-4">
-                             <Image
-                                src={memory.imageUrl}
-                                alt={memory.imageDescription}
-                                fill
-                                className="object-cover"
-                                data-ai-hint={memory.dataAiHint}
-                              />
-                           </div>
-                           <blockquote className="text-center font-headline text-base italic text-gray-700 flex-grow flex items-center justify-center">
-                            <p>"{thought.quote}"</p>
-                           </blockquote>
-                        </CardContent>
-                    </Card>
-                  </div>
-                )
-              })}
+            <h2 className="text-3xl font-headline text-center mb-12 text-primary-foreground/90 text-shadow-custom">Samay Ki Yaadein</h2>
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-full md:left-1/2 md:-translate-x-1/2"></div>
+              {sortedYears.map((year, yearIndex) => (
+                <div key={year} className="mb-12">
+                    <div className="timeline-year-marker absolute -left-4 h-8 w-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold shadow-md md:left-1/2 md:-translate-x-1/2">
+                       {year}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8">
+                      {memoriesByYear[year].map((memory, memoryIndex) => {
+                          const isLeft = yearIndex % 2 === 0 ? memoryIndex % 2 === 0 : memoryIndex % 2 !== 0;
+                          return (
+                            <div key={memory.id} className={`timeline-item ${isLeft ? 'md:col-start-1' : 'md:col-start-2'}`}>
+                                <Card className="bg-white/70 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                                    <CardContent className="p-4">
+                                      <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md mb-4">
+                                        <Image
+                                            src={memory.imageUrl}
+                                            alt={memory.imageDescription}
+                                            fill
+                                            className="object-cover"
+                                            data-ai-hint={memory.dataAiHint}
+                                          />
+                                      </div>
+                                      <h3 className="font-headline text-lg text-primary-foreground/90">{memory.imageDescription}</h3>
+                                      <p className="text-sm text-muted-foreground mt-2 italic">"{memory.wish || thoughtCards[memoryIndex % thoughtCards.length].quote}"</p>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                          )
+                      })}
+                    </div>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -275,7 +297,7 @@ export default function AlbumPage() {
           <MemoryForm
             memoryToEdit={editingMemory}
             onSave={handleSaveMemory}
-            onDelete={editingMemory ? () => handleDeleteMemory(editingMemory.id) : undefined}
+            onDelete={editingMemory ? () => handleDeleteMemory(editingMemory!.id) : undefined}
             onClose={() => setIsModalOpen(false)}
           />
         </DialogContent>

@@ -67,6 +67,7 @@ export default function CreateAlbumPage() {
       imageUrl: 'https://placehold.co/600x400.png',
       imageDescription: 'Ek bhai aur behen haste hue.',
       wish: '',
+      year: new Date().getFullYear().toString(),
       dataAiHint: 'siblings laughing'
     },
   ]);
@@ -81,6 +82,7 @@ export default function CreateAlbumPage() {
         imageUrl: 'https://placehold.co/600x400.png',
         imageDescription: '',
         wish: '',
+        year: new Date().getFullYear().toString(),
         dataAiHint: ''
       },
     ]);
@@ -100,7 +102,7 @@ export default function CreateAlbumPage() {
 
   const handleInputChange = (
     id: number,
-    field: 'imageDescription' | 'wish',
+    field: 'imageDescription' | 'wish' | 'year',
     value: string
   ) => {
     setMemories(
@@ -136,11 +138,11 @@ export default function CreateAlbumPage() {
 
   const handleSubmit = () => {
     // Basic validation
-    if (memories.some(mem => !mem.imageDescription)) {
+    if (memories.some(mem => !mem.imageDescription || !mem.year)) {
         toast({
             variant: "destructive",
             title: "Adhuri Yaadein",
-            description: "Kripya har yaad ke liye vivaran dein."
+            description: "Kripya har yaad ke liye vivaran aur saal dein."
         });
         return;
     }
@@ -150,6 +152,7 @@ export default function CreateAlbumPage() {
       imageUrl: mem.imageUrl,
       imageDescription: mem.imageDescription,
       wish: mem.wish, // Wish can be generated on the album page
+      year: mem.year,
       rotation: 0,
       scale: 1,
       dataAiHint: mem.imageDescription.split(' ').slice(0, 2).join(' '),
@@ -205,6 +208,25 @@ export default function CreateAlbumPage() {
                   </div>
 
                   <div className="md:col-span-2 space-y-4">
+                    <div>
+                      <Label htmlFor={`year-${memory.id}`}>
+                        Yaad ka Saal
+                      </Label>
+                      <Input
+                        id={`year-${memory.id}`}
+                        type="number"
+                        placeholder="Jaise, 2015"
+                        value={memory.year}
+                        onChange={(e) =>
+                          handleInputChange(
+                            memory.id,
+                            'year',
+                            e.target.value
+                          )
+                        }
+                        className="mt-1"
+                      />
+                    </div>
                      <div>
                       <Label htmlFor={`description-${memory.id}`}>
                         Us pal ko bayaan karein
